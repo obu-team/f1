@@ -103,7 +103,7 @@ class AIService {
 			.map(e => ({
 				type: 'team',
 				owlType: e.type,
-				gp: e.entityId,
+				team: e.entityId,
 				text: e.matchedText
 			})).value()
 			cb(null, data)

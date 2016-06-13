@@ -64,6 +64,7 @@ class Dashboard extends React.Component {
 		}
 		this.onSrcChange = this.onSrcChange.bind(this)
 		this.search = this.search.bind(this)
+		this.onTab = this.onTab.bind(this)
 	}
 	onSrcChange(v) {
 		let rec = ''
@@ -80,6 +81,13 @@ class Dashboard extends React.Component {
 			src: v,
 			recommend: rec,
 			error: false
+		})
+	}
+	onTab() {
+		let {src, recommend} = this.state
+		this.setState({
+			src: src + recommend,
+			recommend: ''
 		})
 	}
 	search() {
@@ -107,7 +115,7 @@ class Dashboard extends React.Component {
 				<FullScreen style={[styles.ease, search || modal ? styles.blur : null]}>
 					<CenterContainer>
 						<img src='/img/f1_logo.png' style={styles.logo} /><br/>
-						<div style={styles.input}><SearchInput recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} /></div><br/>
+						<div style={styles.input}><SearchInput recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} /></div><br/>
 						<button style={[styles.button, styles.ease]} onClick={this.search}><i className='fa fa-search' />&nbsp; Search</button>
 					</CenterContainer>
 				</FullScreen>

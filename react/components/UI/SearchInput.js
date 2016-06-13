@@ -46,15 +46,22 @@ class SearchInput extends React.Component {
 	constructor(props) {
 		super(props)
 		this.onKey = this.onKey.bind(this)
+		this.onKeyDown = this.onKeyDown.bind(this)
 	}
 	onKey(e) {
 		if(e.key == 'Enter') this.props.onEnter()
+	}
+	onKeyDown(e) {
+		if(e.key == 'Tab') {
+			e.preventDefault()
+			this.props.onTab()
+		}
 	}
 	render() {
 		return (
 			<div style={[styles.container, this.props.style]}>
 				<div style={[styles.inpContainer, styles.recommend]}><span style={styles.whiteSpace}>{this.props.value}</span>{this.props.recommend}</div>
-				<input key='inputSrc' type='text' style={[styles.ease, styles.inpContainer]} value={this.props.value} onChange={e => this.props.onChange(e.target.value)} onKeyPress={this.onKey} />
+				<input key='inputSrc' type='text' style={[styles.ease, styles.inpContainer]} value={this.props.value} onChange={e => this.props.onChange(e.target.value)} onKeyPress={this.onKey} onKeyDown={this.onKeyDown} />
 			</div>
 		)
 	}
