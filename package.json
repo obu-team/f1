@@ -55,6 +55,7 @@
     "reflux": "*",
     "request": "*",
     "serve-favicon": "*",
+    "sparqling-star": "^1.1.0",
     "superagent": "*",
     "superagent-jsonp": "*",
     "validator": "*",
