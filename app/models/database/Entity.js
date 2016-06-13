@@ -4,10 +4,10 @@ const Schema = mongoose.Schema
 const EntitySchema = new Schema({
 	name: String,
 	type: String,
-	owlType: [],
+	owlType: [String],
 	dbpediaID: String,
 	ergastID: String,
-	keywords: []
+	keywords: [String]
 }, {versionKey: false})
 
 const Entity = module.exports = mongoose.model('Entity',EntitySchema)
