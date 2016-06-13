@@ -1,0 +1,12 @@
+{
+	"app": {
+		"url": "http://localhost",
+		"port": "8005"
+	},
+	"db": "mongodb://127.0.0.1:27017/f1trirTest",
+	"secrets": {
+		"app": "-h9:~Ul$Ih5zt,m55g@<$JSsh~rlI.9z",
+		"socket": "u_TOtxO^2ViIS3jn]>g2<UM[BYv!T2WW",
+		"jwt": "_#$rw+J)ISGRq0|=(<3g1D.z6b_mdN%O"
+	}
+}

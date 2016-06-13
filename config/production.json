@@ -1,0 +1,12 @@
+{
+	"app": {
+		"url": "http://localhost",
+		"port": "8000"
+	},
+	"db": "mongodb://f1trir:f1trir@ds013414.mlab.com:13414/f1trir",
+	"secrets": {
+		"app": "y^-d!3)=23n3(__V3z4[<ze&ZHk]BN=?",
+		"socket": "v&s/k`fGAe>y?g75DOC>2fNzv?Ud}|=3",
+		"jwt": "pKT15#*I5dL`oUgp5C}Yug@2t[G?5w97"
+	}
+}
