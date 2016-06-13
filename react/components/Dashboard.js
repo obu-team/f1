@@ -67,12 +67,14 @@ class Dashboard extends React.Component {
 	}
 	onSrcChange(v) {
 		let rec = ''
-		if(v.length>=3) {
+		let words = v.split(' ')
+		let word = _.last(words)
+		if(word && word.length>=2) {
 			let r = _.find(this.props.suggestions, s => {
-				return s.toLowerCase().startsWith(v.toLowerCase())
+				return s.toLowerCase().startsWith(word.toLowerCase())
 			})
 			r = r || ''
-			if(r) rec = r.substring(v.length)
+			if(r) rec = r.substring(word.length)
 		}
 		this.setState({
 			src: v,
