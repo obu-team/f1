@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "test": "NODE_ENV=test mocha -R nyan",
-    "start": "NODE_ENV=production node ./bin/www",
+    "start": "NODE_ENV=production node --use_strict ./bin/www",
     "dev": "nodemon ./bin/www --ignore ./react/ --ignore ./public/ --ignore ./test/ --ignore ./storage/",
     "production": "NODE_ENV=production node ./bin/www"
   },
