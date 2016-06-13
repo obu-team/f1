@@ -7,6 +7,8 @@ r.get('/', RootController.get)
 
 r.post('/ai/analyse', AIController.analyse)
 
+r.post('/ai/sparql', AIController.sparql)
+
 r.use('*', RootController.all)
 
 module.exports = r
