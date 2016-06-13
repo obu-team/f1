@@ -22,6 +22,11 @@ class AnalyseService {
 				if(err) return cb(err)
 				data.dates = r
 				cb()
+			}),
+			cb => AIService.keywords('aylien', text, (err, r) => {
+				if(err) return cb(err)
+				data.keywords = r.keyword
+				cb()
 			})
 		], err => {
 			if(err) return cb(err)

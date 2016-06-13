@@ -3,6 +3,7 @@ const async = require('async')
 const $ = require('superagent')
 
 const Consts = require('../lib/Consts')
+const StringUtilService = require('./StringUtil.Service')
 const AnalyseService = require('./Analyse.Service')
 
 class SparqlService {
@@ -19,10 +20,13 @@ class SparqlService {
 	}
 
 	static generateSparqlQuery(keywords, cb) {
-		let query = 'testni query'
-		if(keywords.countries && keywords.drivers)
-		console.log(keywords)
-		cb(null, query)
+		let query = 'query za seznam dirkačev po državah ali ekipah'
+		if((keywords.countries.length > 0 || keywords.teams.length > 0) 
+			&& keywords.drivers.length === 0 && StringUtilService.hasDriversKeyword) {
+			cb(null, query)
+		} else {
+			cb(null, 'neki drugi query')
+		}
 	}
 }
 
