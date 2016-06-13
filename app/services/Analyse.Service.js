@@ -53,6 +53,12 @@ class AnalyseService {
 		], err => {
 			if(err) return cb(err)
 			entities = _.flattenDeep(entities)
+			_.forEach(data.dates, date => {
+				entities.push({
+					type: 'date',
+					name: date
+				})
+			})
 			cb(null, entities)
 		})
 	}
