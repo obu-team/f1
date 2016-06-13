@@ -7,8 +7,8 @@ r.get('/', RootController.get)
 
 r.get('/ai/suggestions', AIController.getSuggestions)
 r.post('/ai/analyse', AIController.analyse)
-
-r.post('/ai/sparql', AIController.sparql)
+r.post('/ai/entity', AIController.getEntity)
+r.post('/ai/drivers', AIController.getDrivers)
 
 r.use('*', RootController.all)
 

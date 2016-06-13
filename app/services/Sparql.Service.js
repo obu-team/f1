@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const async = require('async')
 const $ = require('superagent')
-const sparqler = require( 'sparqling-star' )
+const sparqls = require( 'sparqling-star' )
 
 const Consts = require('../lib/Consts')
 const StringUtilService = require('./StringUtil.Service')
@@ -30,8 +30,62 @@ class SparqlService {
 		}
 	}*/
 
+	static getEntity(entity, cb) {
+		switch(entity.type) {
+			case 'track':
+				//TODO: implement return track
+				break;
+			case 'driver':
+				//TODO: implement return driver
+				break;
+			case 'team':
+				SparqlService.getRacingTeam(entity, cb)
+				break;
+		}
+	}
+
+	static getRacingTeam(entity, cb) {	
+		var myquery = new sparqls.Query()
+		var team = {
+			'type': 'dbo:FormulaOneTeam',
+			'foaf:name': '?name',
+			'dbo:thumbnail': '?thumbnail',
+			'foaf:homepage': '?homepage',
+			'dbo:abstract': '?abstract',
+			'dbp:consChamp': '?consChamp',
+			'dbp:driversChamp': '?driversChamp',
+			'dbp:debut': '?debut',
+			'dbp:fastestLaps': '?fastestLaps',
+			'dbp:wins': '?wins',
+			'dbp:poles': '?poles',
+			'dbp:races': '?races'
+		}
+		var regex = 'regex(str(?team), \'^.*' + entity.name + '.*\', \'i\')'
+		var regexlang = 'LANG(?abstract)=\'en\''
+		myquery.registerVariable('team', team)
+			   .filter(regex)
+		       .filter(regexlang)
+
+		console.log( myquery.sparqlQuery )
+		
+		var sparqler = new sparqls.Client();
+		sparqler.send(myquery, (err, data) => {
+			if(err) cb(err)
+			console.log( data.results );
+			cb(null, data)
+		});
+	}
+
+	static getDriver(entity, cb) {
+
+	}
+
+	static getTrack(entity, cb) {
+
+	}
+
 	static getDriversFromCountryOrTeam(cb) {
-		var myquery = new sparqls.Query();
+		var myquery = new sparqler.Query();
 	}
 }
 

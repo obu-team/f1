@@ -25,11 +25,19 @@ class AIController {
 		})
 	}
 
-	static sparql(req, res) {
-		let {text} = req.body
-		SparqlService.getResults(text, (err, data) => {
-			res.json(data);
+	static getEntity(req, res) {
+		let entity = req.body
+		console.log(entity.name);
+		SparqlService.getEntity(entity, (err, data) => {
+			if(err) return res.sendStatus(err)
+			res.json(data)
 		})
+	}
+
+	static getDrivers(req, res) {
+		let {analyse} = req.body
+
+		res.json(analyse)
 	}
 }
 
