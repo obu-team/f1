@@ -5,6 +5,7 @@ const AIController = require('../controllers/AI.Controller')
 
 r.get('/', RootController.get)
 
+r.get('/ai/suggestions', AIController.getSuggestions)
 r.post('/ai/analyse', AIController.analyse)
 
 r.use('*', RootController.all)
