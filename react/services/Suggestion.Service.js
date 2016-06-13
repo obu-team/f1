@@ -27,7 +27,10 @@ const temp = [
 
 class SuggestionService {
 	static getSuggestions(cb) {
-		cb(temp)
+		$.get('/ai/suggestions')
+		.end((err, res) => {
+			cb(err ? [] : res.body)
+		})
 	}
 }
 
