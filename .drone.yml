@@ -1,0 +1,9 @@
+build:
+  image: node
+  commands:
+    - npm install
+    - npm test
+deploy:
+  git_push:
+    branch: master
+    remote: dokku@grega.xyz:f1
