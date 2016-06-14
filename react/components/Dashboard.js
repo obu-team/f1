@@ -10,6 +10,7 @@ import Loader from './UI/Loader'
 import FullScreen from './UI/FullScreen'
 import CenterContainer from './UI/CenterContainer'
 import SearchInput from './UI/SearchInput'
+import SearchGrid from './SearchGrid'
 
 const styles = {
 	logo: {
@@ -58,9 +59,9 @@ class Dashboard extends React.Component {
 		this.state = {
 			search: false,
 			modal: false,
-			error: false,
 			src: '',
-			recommend: ''
+			recommend: '',
+			entities: []
 		}
 		this.onSrcChange = this.onSrcChange.bind(this)
 		this.search = this.search.bind(this)
@@ -79,8 +80,7 @@ class Dashboard extends React.Component {
 		}
 		this.setState({
 			src: v,
-			recommend: rec,
-			error: false
+			recommend: rec
 		})
 	}
 	onTab() {
@@ -95,30 +95,46 @@ class Dashboard extends React.Component {
 		let src = this.state.src + this.state.recommend
 		this.setState({
 			search: true,
-			error: false,
 			src: src,
 			recommend: ''
 		})
 		TextAnalysisService.analyse(src, (err, res) => {
-			console.log(res.body)
+			let grouped = _.groupBy(res, 'type')
+			let types = _.keys(grouped)
+			console.log(grouped)
+			console.log(types)
 			this.setState({
-				search: false
+				search: false,
+				entities: res,
+				modal: true
 			})
 		})
+	}
+	renderFullSrc() {
+		return (
+			<FullScreen>
+				<CenterContainer>
+					<img src='/img/f1_logo.png' style={styles.logo} /><br/>
+					<div style={styles.input}><SearchInput recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} /></div><br/>
+					<button style={[styles.button, styles.ease]} onClick={this.search}><i className='fa fa-search' />&nbsp; Search</button>
+				</CenterContainer>
+			</FullScreen>
+		)
+	}
+	renderGrid() {
+		return <SearchGrid recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
 	}
 	render() {
 		const {search, modal} = this.state
 		const loader = this.state.search ? <FullScreen style={[styles.loader.container]}><CenterContainer><Loader style={[styles.loader.loader]} /></CenterContainer></FullScreen> : null
+		let cnt = this.state.modal ? this.renderGrid() : this.renderFullSrc()
+		cnt = this.renderGrid()
 		return (
 			<div>
 				{loader}
-				<FullScreen style={[styles.ease, search || modal ? styles.blur : null]}>
-					<CenterContainer>
-						<img src='/img/f1_logo.png' style={styles.logo} /><br/>
-						<div style={styles.input}><SearchInput recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} /></div><br/>
-						<button style={[styles.button, styles.ease]} onClick={this.search}><i className='fa fa-search' />&nbsp; Search</button>
-					</CenterContainer>
-				</FullScreen>
+				<div style={[styles.ease, search ? styles.blur : null]}>
+					{cnt}
+				</div>
 			</div>
 		)
 	}

@@ -24,6 +24,7 @@ const styles = {
 		fontSize: '1rem',
 		textAlign: 'left',
 		fontFamily: 'Roboto',
+		borderRadius: 5,
 		margin: 0,
 		':focus': {
 			outline: 'none',
@@ -60,8 +61,8 @@ class SearchInput extends React.Component {
 	render() {
 		return (
 			<div style={[styles.container, this.props.style]}>
-				<div style={[styles.inpContainer, styles.recommend]}><span style={styles.whiteSpace}>{this.props.value}</span>{this.props.recommend}</div>
-				<input key='inputSrc' type='text' style={[styles.ease, styles.inpContainer]} value={this.props.value} onChange={e => this.props.onChange(e.target.value)} onKeyPress={this.onKey} onKeyDown={this.onKeyDown} />
+				<div style={[styles.inpContainer, styles.recommend, this.props.inpStyle]}><span style={styles.whiteSpace}>{this.props.value}</span>{this.props.recommend}</div>
+				<input key='inputSrc' type='text' style={[styles.ease, styles.inpContainer, this.props.inpStyle]} value={this.props.value} onChange={e => this.props.onChange(e.target.value)} onKeyPress={this.onKey} onKeyDown={this.onKeyDown} />
 			</div>
 		)
 	}
@@ -70,7 +71,8 @@ class SearchInput extends React.Component {
 SearchInput.defaultProps = {
 	style: {},
 	value: '',
-	recommend: ''
+	recommend: '',
+	inpStyle: {}
 }
 
 export default Radium(SearchInput)
