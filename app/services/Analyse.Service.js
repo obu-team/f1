@@ -28,13 +28,18 @@ class AnalyseService {
 			})
 		], err => {
 			if(err) return cb(err)
-			AnalyseService.compare(data, cb)
+			AnalyseService.compare(text, data, cb)
 		})
 	}
 
-	static compare(data, cb) {
+	static compare(text, data, cb) {
 		let entities = []
 		async.parallel([
+			cb1 => AnalyseService.getRawEntities(text, (err, es) => {
+				if(err) return cb1(err)
+				entities.push(es)
+				cb1()
+			}),
 			cb1 => AnalyseService.analyseDrivers(data.drivers, (err, drivers) => {
 				if(err) return cb1(err)
 				entities.push(drivers)
@@ -53,6 +58,7 @@ class AnalyseService {
 		], err => {
 			if(err) return cb(err)
 			entities = _.flattenDeep(entities)
+			entities = _.uniqBy(entities, '_id')
 			_.forEach(data.dates, date => {
 				entities.push({
 					type: 'date',
@@ -60,6 +66,20 @@ class AnalyseService {
 				})
 			})
 			cb(null, entities)
+		})
+	}
+
+	static getRawEntities(text, cb) {
+		let keys = text.split(' ')
+		Entity.find({
+			$or: [
+				{name: new RegExp('^'+text+'$', "i")},
+				{name: {$in: keys}},
+				{keywords: {$elemMatch: {$in: keys}}}
+			]
+		}, (err, es) => {
+			if(err) return cb(err)
+			cb(null, es)
 		})
 	}
 
@@ -91,6 +111,7 @@ class AnalyseService {
 		Entity.find({
 			type: 'driver',
 			$or: [
+				{name: driver.text},
 				{keywords: driver.text},
 				{keywords: driver.driver.toLowerCase()}
 			]
@@ -179,6 +200,7 @@ class AnalyseService {
 		Entity.find({
 			type: 'team',
 			$or: [
+				{name: team.text},
 				{keywords: team.text},
 				{keywords: team.team.toLowerCase()}
 			]
