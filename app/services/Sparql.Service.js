@@ -5,30 +5,11 @@ const sparqls = require( 'sparqling-star' )
 
 const Consts = require('../lib/Consts')
 const StringUtilService = require('./StringUtil.Service')
-const AnalyseService = require('./Analyse.Service')
+const Database = require('../lib/Database')
+
+const Entity = Database.model('Entity')
 
 class SparqlService {
-	/*static getResults(text, cb) {
-		AnalyseService.analyseText(text, (err, data) => {
-			if(err) return cb(err)
-			let keywords = data
-			SparqlService.executeSparqlQuery(keywords, (err, query) => {
-				if(err) return cb(err)
-				cb(null, query)
-			})
-			//cb(null, data)
-		})
-	}*/
-
-	/*static executeSparqlQuery(keywords, cb) {
-		let query = 'query za seznam dirkačev po državah ali ekipah'
-		if((keywords.countries.length > 0 || keywords.teams.length > 0) 
-			&& keywords.drivers.length === 0 && StringUtilService.hasDriversKeyword) {
-			cb(null, query)
-		} else {
-			cb(null, 'neki drugi query')
-		}
-	}*/
 
 	static getEntity(entity, cb) {
 		switch(entity.type) {
@@ -42,6 +23,82 @@ class SparqlService {
 				SparqlService.getRacingTeam(entity, cb)
 				break;
 		}
+	}
+
+	static getTrack(entity, cb) {
+
+	}
+
+	static getRacingDriver(entity, cb) {
+		SparqlService.findEntityDB(entity, (err, data) => {
+			if(err) return cb(err) 
+			if(!data) return cb(null, null) // not found racing driver
+			if(!data.dbpediaID) 
+				SparqlService.findRacingDriverResourceSparql(data, (err, data) => {
+					if(err) return cb(err)
+					return SparqlService.getRacingDriver(entity, cb)
+				})
+			else{
+				let myquery = new sparqls.Query()
+				let resource = '<' + data.dbpediaID + '>'
+				let filterLangName = 'LANG(?name)=\'en\''
+				let filterLangAbstract = 'LANG(?abstract)=\'en\''
+				let filterLangNationality = 'LANG(?nationality)=\'en\''
+
+				myquery.registerTriple({
+							'subject': resource,
+							'predicate': 'foaf:name',
+							'object': '?name'
+						})
+						.registerTriple({
+							'subject': resource,
+							'predicate': 'dbo:abstract',
+							'object': '?abstract'
+						})
+						.registerTriple({
+							'subject': resource,
+							'predicate': 'dbo:birthDate',
+							'object': '?birthDate'
+						})
+						.registerTriple({
+							'subject': resource,
+							'predicate': 'dbo:championships',
+							'object': '?championships'
+						})
+						.registerTriple({
+							'subject': resource,
+							'predicate': 'dbo:wikiPageID',
+							'object': '?wikiPageID'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbp:carNumber',
+							'object': '?carNumber }'
+						})
+						.registerTriple({
+							'subject': resource,
+							'predicate': 'dbp:nationality',
+							'object': '?nationality'
+						})
+						.registerTriple({
+							'subject': resource,
+							'predicate': 'dbp:firstRace',
+							'object': '?firstRace'
+						})
+						.filter(filterLangName)
+				   		.filter(filterLangAbstract)
+				   		.filter(filterLangNationality)
+
+				console.log( myquery.sparqlQuery )
+
+				let sparqler = new sparqls.Client();
+				sparqler.send(myquery, (err, data) => {
+					if(err) return cb(err)
+					console.log( data.results );
+					cb(null, data)
+				})
+			} 
+		})
 	}
 
 	static getRacingTeam(entity, cb) {	
@@ -81,35 +138,36 @@ class SparqlService {
 		});
 	}
 
-	static getRacingDriver(entity, cb) {
+	static getDriversFromCountryOrTeam(cb) {
+		var myquery = new sparqls.Query();
+	}
+
+	static findRacingTrackResourceSparql(entity, cb) {
+
+	}
+
+	static findRacingDriverResourceSparql(entity, cb) {
 		let driverName = entity.name.split(' ')
-		var myquery = new sparqls.Query({
+		let myquery = new sparqls.Query({
 			'limit': 1
 		})
-		var driver = {
+		let resource = {
 			'type': 'dbo:Agent',
-			'foaf:name': '?name',
-			'dbo:abstract': '?abstract',
-			'dbo:birthDate': '?birthDate',
-			'dbo:championships': '?championships',
-			'dbo:wikiPageID': '?wikiPageID',
-			'dbp:carNumber': '?carNumber',
-			'dbp:nationality': '?nationality',
-			'dbp:firstRace': '?firstRace'
+			'foaf:name': '?name'
 		}
-		var name = {
+		let name = {
 			'bif:contains': '"' + driverName[0] + '"'
 		}
-		var filterContains = 'CONTAINS(?name, "' + driverName[1] + '")'
-		var filterLangName = 'LANG(?name)=\'en\''
-		var filterLangAbstract = 'LANG(?abstract)=\'en\''
-		var filterLangNationality = 'LANG(?nationality)=\'en\''
-		myquery.registerVariable('resource', driver)
+		let filterLangName = 'LANG(?name)=\'en\''
+
+		myquery.registerVariable('resource', resource)
 			   .registerVariable('name', name)
-			   .filter(filterContains)
-			   .filter(filterLangName)
-			   .filter(filterLangAbstract)
-			   .filter(filterLangNationality)
+
+		for(var i=1; i<driverName.length; i++) {
+			myquery.filter('CONTAINS(?name, "' + driverName[i] + '")')
+		}
+
+		myquery.filter(filterLangName)
 
 		console.log( myquery.sparqlQuery )
 
@@ -117,16 +175,47 @@ class SparqlService {
 		sparqler.send(myquery, (err, data) => {
 			if(err) cb(err)
 			console.log( data.results );
-			cb(null, data)
+			if(data.results.bindings.length > 0) { //resource found
+				entity.dbpediaID = data.results.bindings[0].resource.value
+				SparqlService.updateEntityDB(entity, (err, data) => {
+					if(err) return cb(err)
+					return cb(null, data)
+				})
+			} else { //resource not found
+				console.log('resource not found')
+				return cb(null, null)
+			}
 		});
 	}
 
-	static getTrack(entity, cb) {
+	static findRacingTeamResourceSparql(entity, cb) {
 
 	}
 
-	static getDriversFromCountryOrTeam(cb) {
-		var myquery = new sparqls.Query();
+	static updateEntityDB(entity, cb) {
+		console.log('entity:' + entity.id)
+		Entity.update(
+			{ _id: entity.id },
+			{ dbpediaID: entity.dbpediaID }, 
+			(err, raw) => {
+				if(err) return cb(err)
+				console.log('raw: ' + raw)
+				return cb(null, raw)
+			}
+		)
+	}
+
+	static findEntityDB(entity, cb) {
+		Entity.findOne({
+			type: entity.type,
+			$or: [
+				{name: entity.name},
+				{keywords: {$in: entity.keywords}}
+			]
+		}, (err, ds) => {
+			if(err) return cb(err)
+			return cb(null, ds)
+		})
 	}
 }
 
