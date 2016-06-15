@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const async = require('async')
 const $ = require('superagent')
-const sparqls = require( 'sparqling-star' )
+const sparqls = require( '../lib/sparqling-star' )
 
 const Consts = require('../lib/Consts')
 const StringUtilService = require('./StringUtil.Service')
