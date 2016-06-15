@@ -30,7 +30,6 @@ class AIController {
 		console.log(entity.name);
 		SparqlService.getEntity(entity, (err, data) => {
 			if(err) return res.sendStatus(500)
-			console.log('------------', data)
 			Entity.update({_id: entity._id}, {data: _.first(data.results.bindings)}, err => {
 				if(err) return res.sendStatus(500)
 				res.json(data)

@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import colors from '../../lib/colors'
 import EntityService from '../../services/Entity.Service'
+import Utils from '../../lib/Utils'
 
 import Paper from './Paper'
 import PaperContent from './PaperContent'
@@ -16,46 +17,60 @@ import PaperBtn from './PaperBtn'
 import Loader from './Loader'
 import CenterContainer from './CenterContainer'
 
-const exclude = ['thumbnail', 'depiction', 'birthPlace', 'wikiPageID']
+const exclude = ['thumbnail', 'depiction', 'birthPlace', 'wikiPageID', 'abstract', 'location']
 
 class Profile extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			entity: null
+			entity: null,
+			err: false
 		}
 	}
 	componentWillMount() {
-		EntityService.getEntity(this.props.entity, (err, res) => {
-			if(err) return false
-			console.log(res.body.results.bindings[0])
-			this.setState({entity: res.body.results.bindings[0]})
-		})
+		if(this.props.entity.data) {
+			this.setState({entity: this.props.entity.data})
+		} else {
+			EntityService.getEntity(this.props.entity, (err, res) => {
+				if(err) return this.setState({entity: null, err: true})
+				this.setState({entity: res.body.results.bindings[0]})
+			})
+		}
 	}
 	renderLoader() {
 		return <Paper><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper>
 	}
 	renderContent() {
 		let {entity} = this.state
-		let img = entity.depiction.value
-		let href = entity.wikiPageID.value
+		let img = _.has(entity, 'depiction') ? <PaperImg src={entity.depiction.value} /> : null
+		let href = _.has(entity, 'wikiPageID') ? <div><PaperLine /><PaperBtn href={`https://en.wikipedia.org/?curid=${entity.wikiPageID.value}`}>Read More</PaperBtn></div> : null
 		let keys = _(entity).keys().filter(k => _.indexOf(exclude, k)==-1).value()
 		return (
 			<Paper>
-				<PaperImg src={img} />
+				{img}
 				<PaperContent>
 					<PaperHeader>{this.props.entity.name}</PaperHeader>
 					<PaperUl>
-						{keys.map(k => <PaperLi key={`${this.props.entity._id}-${k}`} head={k}>{entity[k].value}</PaperLi>)}
+						{keys.map(k => <PaperLi key={`${this.props.entity._id}-${k}`} head={Utils.capitalize(k)}>{Utils.formatEntityString(entity[k].value)}</PaperLi>)}
 					</PaperUl>
-					<PaperLine />
-					<PaperBtn href={href}>Read More</PaperBtn>
+					{href}
+				</PaperContent>
+			</Paper>
+		)
+	}
+	renderAgainBtn() {
+		return (
+			<Paper>
+				<PaperContent>
+					<span>Could not fetch data. Click to try again</span>
 				</PaperContent>
 			</Paper>
 		)
 	}
 	render() {
-		return this.state.entity ? this.renderContent() : this.renderLoader()
+		if(this.state.err) return this.renderAgainBtn()
+		if(!this.state.entity) return this.renderLoader()
+		return this.renderContent()
 	}
 }
 

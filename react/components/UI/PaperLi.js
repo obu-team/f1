@@ -18,6 +18,7 @@ const styles = {
 	txt: {
 		width: '100%',
 		fontSize: '1rem',
+		wordWrap: 'break-word'
 	}
 }
 

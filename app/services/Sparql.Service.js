@@ -420,7 +420,7 @@ class SparqlService {
 
 		let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
-			if(err) cb(err)
+			if(err || !data || !data.results) cb(true)
 			console.log( data.results )
 			if(data.results.bindings.length > 0) { //resource found
 				entity.dbpediaID = data.results.bindings[0].resource.value
