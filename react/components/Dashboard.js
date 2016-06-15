@@ -111,7 +111,6 @@ class Dashboard extends React.Component {
 		const {search, modal} = this.state
 		const loader = this.state.search ? <FullScreen style={[styles.loader.container]}><CenterContainer><Loader style={[styles.loader.loader]} /></CenterContainer></FullScreen> : null
 		let cnt = this.state.modal ? this.renderGrid() : this.renderFullSrc()
-		cnt = this.renderGrid()
 		return (
 			<div>
 				{loader}
