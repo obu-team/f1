@@ -14,7 +14,7 @@ class SparqlService {
 	static getEntity(entity, cb) {
 		switch(entity.type) {
 			case 'track':
-				//TODO: implement return track
+				SparqlService.getTrack(entity, cb)
 				break;
 			case 'driver':
 				SparqlService.getRacingDriver(entity, cb)
@@ -26,7 +26,97 @@ class SparqlService {
 	}
 
 	static getTrack(entity, cb) {
+		SparqlService.findEntityDB(entity, (err, data) => {
+			if(err) return cb(err) 
+			if(!data) return cb(null, null) // not found track
+			if(!data.dbpediaID) 
+				SparqlService.findRacingTrackResourceSparql(data, (err, data) => {
+					if(err) return cb(err)
+					return SparqlService.getTrack(entity, cb)
+				})
+			else{
+				let myquery = new sparqls.Query({
+					'limit': 1
+				})
+				let resource = '<' + data.dbpediaID + '>'
+				let filterLangName = 'LANG(?name)=\'en\''
+				let filterLangAbstract = 'LANG(?abstract)=\'en\''
+				let filterLangComment = 'LANG(?comment)=\'en\''
+				
+				myquery.registerTriple({
+							'subject': resource,
+							'predicate': 'rdfs:label',
+							'object': '?name'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbo:abstract',
+							'object': '?abstract }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbo:thumbnail',
+							'object': '?thumbnail }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbo:wikiPageID',
+							'object': '?wikiPageID }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbp:capacity',
+							'object': '?capacity }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbp:lengthKm',
+							'object': '?lengthKm }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbp:opened',
+							'object': '?opened }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'dbp:capacity',
+							'object': '?capacity }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'georss:point',
+							'object': '?location }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'rdfs:comment',
+							'object': '?comment }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'foaf:depiction',
+							'object': '?depiction }'
+						})
+						.registerTriple({
+							'subject': 'OPTIONAL {' + resource,
+							'predicate': 'foaf:homepage',
+							'object': '?homepage }'
+						})
+						.filter(filterLangName)
+					   	.filter(filterLangAbstract)
+					   	.filter(filterLangComment)
 
+				console.log( myquery.sparqlQuery )
+
+				let sparqler = new sparqls.Client();
+				sparqler.send(myquery, (err, data) => {
+					if(err) return cb(err)
+					console.log( data.results );
+					cb(null, data)
+				})
+			}
+		})
 	}
 
 	static getRacingDriver(entity, cb) {
@@ -239,7 +329,68 @@ class SparqlService {
 	}
 
 	static findRacingTrackResourceSparql(entity, cb) {
+		let myquery = new sparqls.Query();
 
+		let x = {
+			'rdfs:label': {
+				'value': entity.name,
+				'literal': true,
+				'language': 'en'
+			},
+			'dbo:wikiPageRedirects': '?resource'
+		};
+
+		myquery
+			.selection( ['resource'] )
+			.registerVariable( 'x', x );
+
+		console.log( myquery.sparqlQuery );
+
+		let sparqler = new sparqls.Client()
+		sparqler.send(myquery, (err, data) => {
+			if(err) cb(err)
+			console.log( data.results )
+			if(data.results.bindings.length > 0) { //resource found
+				entity.dbpediaID = data.results.bindings[0].resource.value
+				SparqlService.updateEntityDB(entity, (err, data) => {
+					if(err) return cb(err)
+					return cb(null, data)
+				})
+			} else { //resource not found
+				myquery = new sparqls.Query({
+					'limit': 1
+				});
+
+				let resource = {
+					'rdfs:label': {
+						'value': entity.name,
+						'literal': true,
+						'language': 'en'
+					}
+				};
+
+				myquery
+					.selection( ['resource'] )
+					.registerVariable( 'resource', resource );
+
+				console.log( myquery.sparqlQuery );
+
+				sparqler.send(myquery, (err, data) => {
+					if(err) cb(err)
+					console.log( data.results )
+					if(data.results.bindings.length > 0) { //resource found
+						entity.dbpediaID = data.results.bindings[0].resource.value
+						SparqlService.updateEntityDB(entity, (err, data) => {
+							if(err) return cb(err)
+							return cb(null, data)
+						})
+					} else {
+						console.log('resource not found')
+						return cb(null, null)
+					}
+				})
+			}
+		})
 	}
 
 	static findRacingDriverResourceSparql(entity, cb) {
