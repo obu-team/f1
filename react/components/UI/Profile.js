@@ -4,6 +4,7 @@ import _ from 'lodash'
 
 import colors from '../../lib/colors'
 import EntityService from '../../services/Entity.Service'
+import F1Service from '../../services/F1.Service'
 import Utils from '../../lib/Utils'
 
 import Paper from './Paper'
@@ -41,7 +42,7 @@ class Profile extends React.Component {
 		if(this.props.entity.data) {
 			this.setState({entity: this.props.entity.data})
 		} else {
-			this.fetchFromApi()
+			this.fetchSparql()
 		}
 	}
 	reload() {
@@ -49,12 +50,21 @@ class Profile extends React.Component {
 			entity: null,
 			err: false
 		})
-		this.fetchFromApi()
+		this.fetchSparql()
 	}
-	fetchFromApi() {
+	fetchSparql() {
 		EntityService.getEntity(this.props.entity, (err, res) => {
-			if(err || !res.body.results.bindings.length) return this.setState({entity: null, err: true})
+			if(err || !res.body.results.bindings.length) return this.fetchApi()
 			this.setState({entity: res.body.results.bindings[0]})
+		})
+	}
+	fetchApi() {
+		F1Service.getEntity(this.props.entity, (err, res) => {
+			if(err) return this.setState({entity: null, err: true})
+			this.setState({
+				entity: res,
+				err: false
+			})
 		})
 	}
 	renderLoader() {
@@ -71,7 +81,9 @@ class Profile extends React.Component {
 				<PaperContent>
 					<PaperHeader>{this.props.entity.name}</PaperHeader>
 					<PaperUl>
-						{keys.map(k => <PaperLi key={`${this.props.entity._id}-${k}`} head={Utils.capitalize(k)}>{Utils.formatEntityString(entity[k].value)}</PaperLi>)}
+						{keys.map(k => {
+							return <PaperLi key={`${this.props.entity._id}-${k}`} head={Utils.capitalize(k)}>{Utils.formatEntityString(entity[k].value)}</PaperLi>
+						})}
 					</PaperUl>
 					{href}
 				</PaperContent>
