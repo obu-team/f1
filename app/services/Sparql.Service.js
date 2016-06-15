@@ -27,9 +27,9 @@ class SparqlService {
 
 	static getTrack(entity, cb) {
 		SparqlService.findEntityDB(entity, (err, data) => {
-			if(err) return cb(err) 
+			if(err) return cb(err)
 			if(!data) return cb(null, null) // not found track
-			if(!data.dbpediaID) 
+			if(!data.dbpediaID)
 				SparqlService.findRacingTrackResourceSparql(data, (err, data) => {
 					if(err) return cb(err)
 					return SparqlService.getTrack(entity, cb)
@@ -42,7 +42,7 @@ class SparqlService {
 				let filterLangName = 'LANG(?name)=\'en\''
 				let filterLangAbstract = 'LANG(?abstract)=\'en\''
 				let filterLangComment = 'LANG(?comment)=\'en\''
-				
+
 				myquery.registerTriple({
 							'subject': resource,
 							'predicate': 'rdfs:label',
@@ -121,9 +121,9 @@ class SparqlService {
 
 	static getRacingDriver(entity, cb) {
 		SparqlService.findEntityDB(entity, (err, data) => {
-			if(err) return cb(err) 
+			if(err) return cb(err)
 			if(!data) return cb(null, null) // not found racing driver
-			if(!data.dbpediaID) 
+			if(!data.dbpediaID)
 				SparqlService.findRacingDriverResourceSparql(data, (err, data) => {
 					if(err) return cb(err)
 					return SparqlService.getRacingDriver(entity, cb)
@@ -211,15 +211,15 @@ class SparqlService {
 					console.log( data.results );
 					cb(null, data)
 				})
-			} 
+			}
 		})
 	}
 
-	static getRacingTeam(entity, cb) {	
+	static getRacingTeam(entity, cb) {
 		SparqlService.findEntityDB(entity, (err, data) => {
-			if(err) return cb(err) 
+			if(err) return cb(err)
 			if(!data) return cb(null, null) // not found racing team
-			if(!data.dbpediaID) 
+			if(!data.dbpediaID)
 				SparqlService.findRacingTeamResourceSparql(data, (err, data) => {
 					if(err) return cb(err)
 					return SparqlService.getRacingTeam(entity, cb)
@@ -320,7 +320,7 @@ class SparqlService {
 					console.log( data.results );
 					cb(null, data)
 				})
-			} 
+			}
 		})
 	}
 
@@ -459,11 +459,11 @@ class SparqlService {
 			if(err) cb(err)
 			console.log( data.results )
 			if(data.results.bindings.length > 0) { //resource found
-				entity.dbpediaID = data.results.bindings[0].resource.value 
+				entity.dbpediaID = data.results.bindings[0].resource.value
 				SparqlService.updateEntityDB(entity, (err, data) => {
 					if(err) return cb(err)
 					return cb(null, data)
-				})	
+				})
 			} else { //resource not found
 				console.log('resource not found')
 				return cb(null, null)
@@ -475,7 +475,7 @@ class SparqlService {
 		console.log('entity:' + entity.id)
 		Entity.update(
 			{ _id: entity.id },
-			{ dbpediaID: entity.dbpediaID }, 
+			{ dbpediaID: entity.dbpediaID },
 			(err, raw) => {
 				if(err) return cb(err)
 				console.log('raw: ' + raw)

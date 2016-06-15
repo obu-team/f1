@@ -5,7 +5,7 @@ class TextAnalysisService {
 		$.post(`/ai/analyse`)
 		.send({text: txt})
 		.end((err, res) => {
-			cb(err, res.body)
+			cb(err, res.body || null)
 		})
 	}
 }
