@@ -1,5 +1,6 @@
 import {DOM} from 'react'
 import _ from 'lodash'
+import moment from 'moment'
 
 class Utils {
 	static parseEntities(entities) {
@@ -15,6 +16,9 @@ class Utils {
 	static formatEntityString(e) {
 		if(e.startsWith('http://') || e.startsWith('https://')) {
 			return DOM.a({href: e, target: '_blank'}, e)
+		}
+		if(/^(\d{4})-(\d{1,2})-(\d{1,2})$/.test(e)) {
+			return moment(e, 'YYYY-MM-DD').format('LL')
 		}
 		return e
 	}

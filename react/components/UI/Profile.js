@@ -19,6 +19,15 @@ import CenterContainer from './CenterContainer'
 
 const exclude = ['thumbnail', 'depiction', 'birthPlace', 'wikiPageID', 'abstract', 'location']
 
+const styles = {
+	reload: {
+		cursor: 'pointer',
+		':hover': {
+			color: colors.red500
+		}
+	}
+}
+
 class Profile extends React.Component {
 	constructor(props) {
 		super(props)
@@ -26,16 +35,27 @@ class Profile extends React.Component {
 			entity: null,
 			err: false
 		}
+		this.reload = this.reload.bind(this)
 	}
 	componentWillMount() {
 		if(this.props.entity.data) {
 			this.setState({entity: this.props.entity.data})
 		} else {
-			EntityService.getEntity(this.props.entity, (err, res) => {
-				if(err) return this.setState({entity: null, err: true})
-				this.setState({entity: res.body.results.bindings[0]})
-			})
+			this.fetchFromApi()
 		}
+	}
+	reload() {
+		this.setState({
+			entity: null,
+			err: false
+		})
+		this.fetchFromApi()
+	}
+	fetchFromApi() {
+		EntityService.getEntity(this.props.entity, (err, res) => {
+			if(err || !res.body.results.bindings.length) return this.setState({entity: null, err: true})
+			this.setState({entity: res.body.results.bindings[0]})
+		})
 	}
 	renderLoader() {
 		return <Paper><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper>
@@ -62,7 +82,8 @@ class Profile extends React.Component {
 		return (
 			<Paper>
 				<PaperContent>
-					<span>Could not fetch data. Click to try again</span>
+					<PaperHeader>{this.props.entity.name}</PaperHeader>
+					<span style={styles.reload} onClick={this.reload}>Could not fetch data. Click to try again</span>
 				</PaperContent>
 			</Paper>
 		)

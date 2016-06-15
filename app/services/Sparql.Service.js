@@ -111,7 +111,7 @@ class SparqlService {
 
 				let sparqler = new sparqls.Client();
 				sparqler.send(myquery, (err, data) => {
-					if(err) return cb(err)
+					if(err || !data || !data.results) return cb(true)
 					console.log( data.results );
 					cb(null, data)
 				})
@@ -207,7 +207,7 @@ class SparqlService {
 
 				let sparqler = new sparqls.Client();
 				sparqler.send(myquery, (err, data) => {
-					if(err) return cb(err)
+					if(err || !data || !data.results) return cb(true)
 					console.log( data.results );
 					cb(null, data)
 				})
@@ -316,7 +316,7 @@ class SparqlService {
 
 				let sparqler = new sparqls.Client();
 				sparqler.send(myquery, (err, data) => {
-					if(err) return cb(err)
+					if(err || !data || !data.results) return cb(true)
 					console.log( data.results );
 					cb(null, data)
 				})
@@ -348,7 +348,7 @@ class SparqlService {
 
 		let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
-			if(err) cb(err)
+			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
 			if(data.results.bindings.length > 0) { //resource found
 				entity.dbpediaID = data.results.bindings[0].resource.value
@@ -376,7 +376,7 @@ class SparqlService {
 				console.log( myquery.sparqlQuery );
 
 				sparqler.send(myquery, (err, data) => {
-					if(err) cb(err)
+					if(err || !data || !data.results) return cb(true)
 					console.log( data.results )
 					if(data.results.bindings.length > 0) { //resource found
 						entity.dbpediaID = data.results.bindings[0].resource.value
@@ -420,7 +420,7 @@ class SparqlService {
 
 		let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
-			if(err || !data || !data.results) cb(true)
+			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
 			if(data.results.bindings.length > 0) { //resource found
 				entity.dbpediaID = data.results.bindings[0].resource.value
@@ -456,7 +456,7 @@ class SparqlService {
 
 		let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
-			if(err) cb(err)
+			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
 			if(data.results.bindings.length > 0) { //resource found
 				entity.dbpediaID = data.results.bindings[0].resource.value
@@ -472,9 +472,9 @@ class SparqlService {
 	}
 
 	static updateEntityDB(entity, cb) {
-		console.log('entity:' + entity.id)
+		console.log('entity:' + entity._id)
 		Entity.update(
-			{ _id: entity.id },
+			{ _id: entity._id },
 			{ dbpediaID: entity.dbpediaID },
 			(err, raw) => {
 				if(err) return cb(err)
@@ -485,6 +485,13 @@ class SparqlService {
 	}
 
 	static findEntityDB(entity, cb) {
+		Entity.findById(entity._id, (err, ds) => {
+			if(err) return cb(err)
+			return cb(null, ds)
+		})
+	}
+
+	static findEntityDB2(entity, cb) {
 		Entity.findOne({
 			type: entity.type,
 			$or: [
