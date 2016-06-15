@@ -18,7 +18,8 @@ const styles = {
 		zIndex: 100
 	},
 	logo: {
-		height: 40
+		height: 40,
+		cursor: 'pointer'
 	},
 	input: {
 		width: 400,
@@ -42,7 +43,7 @@ class Nav extends React.Component {
 	render() {
 		return (
 			<nav style={styles.container}>
-				<img src='/img/f1_logo_dark.png' style={styles.logo} />
+				<img src='/img/f1_logo_dark.png' onClick={this.props.onHome} style={styles.logo} />
 				<div style={styles.input}><SearchInput inpStyle={[styles.inp]} recommend={this.props.recommend} value={this.props.value} onChange={this.props.onChange} onEnter={this.props.onEnter} onTab={this.props.onTab} /></div>
 			</nav>
 		)

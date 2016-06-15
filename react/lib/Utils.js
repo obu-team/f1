@@ -14,7 +14,6 @@ class Utils {
 
 	static formatEntityString(e) {
 		if(e.startsWith('http://') || e.startsWith('https://')) {
-			//return <a href={e} target='_blank'>{e}</a>
 			return DOM.a({href: e, target: '_blank'}, e)
 		}
 		return e

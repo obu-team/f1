@@ -54,6 +54,7 @@ class Dashboard extends React.Component {
 		this.onSrcChange = this.onSrcChange.bind(this)
 		this.search = this.search.bind(this)
 		this.onTab = this.onTab.bind(this)
+		this.onHome = this.onHome.bind(this)
 	}
 	onSrcChange(v) {
 		let rec = ''
@@ -76,6 +77,15 @@ class Dashboard extends React.Component {
 		this.setState({
 			src: src + recommend,
 			recommend: ''
+		})
+	}
+	onHome() {
+		this.setState({
+			search: false,
+			modal: false,
+			src: '',
+			recommend: '',
+			entities: []
 		})
 	}
 	search() {
@@ -105,7 +115,7 @@ class Dashboard extends React.Component {
 		)
 	}
 	renderGrid() {
-		return <SearchGrid recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
+		return <SearchGrid onHome={this.onHome} recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
 	}
 	render() {
 		const {search, modal} = this.state
