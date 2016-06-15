@@ -7,7 +7,11 @@ const EntitySchema = new Schema({
 	owlType: [String],
 	dbpediaID: String,
 	ergastID: String,
-	keywords: [String]
+	keywords: [String],
+	data: {
+		type: [],
+		default: []
+	}
 }, {versionKey: false})
 
 const Entity = module.exports = mongoose.model('Entity',EntitySchema)
