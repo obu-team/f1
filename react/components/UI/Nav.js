@@ -27,10 +27,6 @@ const styles = {
 		display: 'inline-block',
 		padding: 0
 	},
-	inpContainer: {
-		borderRadius: 5,
-		overflow: 'hidden'
-	},
 	inp: {
 		border: `1px solid ${colors.white}`,
 		':focus': {
@@ -47,7 +43,7 @@ class Nav extends React.Component {
 		return (
 			<nav style={styles.container}>
 				<img src='/img/f1_logo_dark.png' style={styles.logo} />
-				<div style={styles.input}><SearchInput style={[styles.inpContainer]} inpStyle={[styles.inp]} recommend={this.props.recommend} value={this.props.value} onChange={this.props.onChange} onEnter={this.props.onEnter} onTab={this.props.onTab} /></div>
+				<div style={styles.input}><SearchInput inpStyle={[styles.inp]} recommend={this.props.recommend} value={this.props.value} onChange={this.props.onChange} onEnter={this.props.onEnter} onTab={this.props.onTab} /></div>
 			</nav>
 		)
 	}

@@ -8,7 +8,8 @@ const styles = {
 		width: '100%',
 		height: '100%',
 		position: 'relative',
-		background: colors.white
+		background: colors.white,
+		overflow: 'hidden'
 	},
 	inpContainer: {
 		position: 'absolute',
@@ -20,11 +21,10 @@ const styles = {
 		background: 'none',
 		border: `1px solid ${colors.grey500}`,
 		fontWeight: 300,
-		padding: '5px',
+		padding: '5px 45px 5px 5px',
 		fontSize: '1rem',
 		textAlign: 'left',
 		fontFamily: 'Roboto',
-		borderRadius: 5,
 		margin: 0,
 		':focus': {
 			outline: 'none',
@@ -40,6 +40,23 @@ const styles = {
 	},
 	whiteSpace: {
 		color: colors.white
+	},
+	icon: {
+		position: 'absolute',
+		width: 40,
+		height: 40,
+		top: 0,
+		right: 0,
+		display: 'block',
+		fontSize: '1em',
+		background: colors.grey800,
+		color: colors.white,
+		border: 'none',
+		padding: 0,
+		cursor: 'pointer',
+		':hover': {
+			color: colors.grey500
+		}
 	}
 }
 
@@ -63,6 +80,7 @@ class SearchInput extends React.Component {
 			<div style={[styles.container, this.props.style]}>
 				<div style={[styles.inpContainer, styles.recommend, this.props.inpStyle]}><span style={styles.whiteSpace}>{this.props.value}</span>{this.props.recommend}</div>
 				<input key='inputSrc' type='text' style={[styles.ease, styles.inpContainer, this.props.inpStyle]} value={this.props.value} onChange={e => this.props.onChange(e.target.value)} onKeyPress={this.onKey} onKeyDown={this.onKeyDown} />
+				<button style={[styles.icon, styles.ease]} key='internalSrcButton' onClick={e => this.props.onEnter()}><i className='fa fa-search' /></button>
 			</div>
 		)
 	}

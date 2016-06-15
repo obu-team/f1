@@ -58,7 +58,7 @@ class AnalyseService {
 		], err => {
 			if(err) return cb(err)
 			entities = _.flattenDeep(entities)
-			entities = _.uniqBy(entities, '_id')
+			entities = _.uniqBy(entities, 'ergastID')
 			_.forEach(data.dates, date => {
 				entities.push({
 					type: 'date',

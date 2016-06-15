@@ -25,18 +25,6 @@ const styles = {
 	ease: {
 		transition: 'all 0.1s ease-in-out'
 	},
-	button: {
-		background: colors.grey800,
-		border: 'none',
-		borderRadius: 5,
-		margin: 0,
-		marginTop: 34,
-		color: colors.white,
-		fontWeight: 400,
-		padding: 10,
-		cursor: 'pointer',
-		fontSize: '1rem'
-	},
 	blur: {
 		filter: 'blur(10px)'
 	},
@@ -99,10 +87,6 @@ class Dashboard extends React.Component {
 			recommend: ''
 		})
 		TextAnalysisService.analyse(src, (err, res) => {
-			let grouped = _.groupBy(res, 'type')
-			let types = _.keys(grouped)
-			console.log(grouped)
-			console.log(types)
 			this.setState({
 				search: false,
 				entities: res,
@@ -116,7 +100,6 @@ class Dashboard extends React.Component {
 				<CenterContainer>
 					<img src='/img/f1_logo.png' style={styles.logo} /><br/>
 					<div style={styles.input}><SearchInput recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} /></div><br/>
-					<button style={[styles.button, styles.ease]} onClick={this.search}><i className='fa fa-search' />&nbsp; Search</button>
 				</CenterContainer>
 			</FullScreen>
 		)

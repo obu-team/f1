@@ -50,6 +50,7 @@
     "react": "*",
     "react-addons-css-transition-group": "*",
     "react-dom": "*",
+    "react-masonry-component": "^4.0.4",
     "react-router": "*",
     "react-tap-event-plugin": "*",
     "reflux": "*",

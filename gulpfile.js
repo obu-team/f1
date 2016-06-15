@@ -21,6 +21,7 @@ var dependencies = [
   'maplace-js',
   'moment',
   'moment-timezone',
+  'react-masonry-component',
   'node-uuid',
   'normalizr',
   'numeral',
