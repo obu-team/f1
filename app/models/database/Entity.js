@@ -9,8 +9,8 @@ const EntitySchema = new Schema({
 	ergastID: String,
 	keywords: [String],
 	data: {
-		type: [],
-		default: []
+		type: {},
+		default: null
 	}
 }, {versionKey: false})
 
