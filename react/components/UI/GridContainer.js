@@ -30,7 +30,7 @@ class GridContainer extends React.Component {
 		this.state = {
 			profiles: [],
 			dates: [],
-			summary: null
+			summaries: []
 		}
 	}
 	componentWillMount() {
