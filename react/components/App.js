@@ -11,6 +11,10 @@ import CenterContainer from './UI/CenterContainer'
 const styles = {
 	loader: {
 		background: colors.red500
+	},
+	bg: {
+		background: 'url(\'/img/bg2.jpg\') no-repeat center center',
+		backgroundSize: 'cover'
 	}
 }
 
@@ -31,7 +35,7 @@ class App extends React.Component {
 		})
 	}
 	renderLoader() {
-		return <FullScreen><CenterContainer><Loader style={[styles.loader]} /></CenterContainer></FullScreen>
+		return <FullScreen style={[styles.bg]}><CenterContainer><Loader style={[styles.loader]} /></CenterContainer></FullScreen>
 	}
 	renderContent() {
 		var childrenWithProps = React.Children.map(this.props.children, child => React.cloneElement(child, {

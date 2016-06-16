@@ -38,6 +38,10 @@ const styles = {
 		loader: {
 			background: colors.red500
 		}
+	},
+	bg: {
+		background: 'url(\'/img/bg2.jpg\') no-repeat center center',
+		backgroundSize: 'cover'
 	}
 }
 
@@ -106,9 +110,9 @@ class Dashboard extends React.Component {
 	}
 	renderFullSrc() {
 		return (
-			<FullScreen>
+			<FullScreen style={[styles.bg]}>
 				<CenterContainer>
-					<img src='/img/f1_logo.png' style={styles.logo} /><br/>
+					<img src='/img/f1_logo_bright.png' style={styles.logo} /><br/>
 					<div style={styles.input}><SearchInput recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} /></div><br/>
 				</CenterContainer>
 			</FullScreen>

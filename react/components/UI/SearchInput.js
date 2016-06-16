@@ -19,7 +19,7 @@ const styles = {
 		height: '100%',
 		boxSizing: 'border-box',
 		background: 'none',
-		border: `1px solid ${colors.grey500}`,
+		border: `none`,
 		fontWeight: 300,
 		padding: '5px 45px 5px 5px',
 		fontSize: '1rem',
@@ -28,7 +28,7 @@ const styles = {
 		margin: 0,
 		':focus': {
 			outline: 'none',
-			border: `1px solid ${colors.grey800}`
+			//border: `1px solid ${colors.grey800}`
 		}
 	},
 	recommend: {
