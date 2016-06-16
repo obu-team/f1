@@ -1,5 +1,6 @@
 import $ from 'superagent'
 import _ from 'lodash'
+import async from 'async'
 
 class F1Service {
 	static getEntity(entity, cb) {
@@ -47,6 +48,39 @@ class F1Service {
 			} else {
 				return cb(true)
 			}
+		})
+	}
+
+	static getDriverSeasonResults(year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/driverStandings.json`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
+	}
+
+	static getTeamSeasonResults(year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructorStandings.json`, ['StandingsTable', 'StandingsLists', 'ConstructorStandings'], cb)
+	}
+
+	static getRaceCalendar(year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}.json`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverResultsBySeason(driver, year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/results.json`, ['RaceTable', 'Races'], cb)
+	}
+
+	static callApi(link, keys, cb) {
+		$.get(link)
+		.end((err, res) => {
+			if(err) return cb(true)
+			let data = res.body.MRData
+			async.forEachSeries(keys, (k, cb1) => {
+				if(!data[k]) return cb1(true)
+				data = data[k]
+				if(_.isArray(data)) {
+					if(!data.length) return cb1(true)
+					if(_.last(keys)!=k) data = _.first(data)
+				}
+				cb1()
+			}, err => cb(err, data))
 		})
 	}
 }

@@ -5,19 +5,19 @@ const styles = {
 	container: {
 		width: '100%',
 		fontWeight: 300,
-		marginBottom: 15,
+		marginBottom: 10,
 		float: 'left'
 	},
 	h2: {
 		width: '100%',
 		margin: 0,
 		padding: 0,
-		fontSize: '1rem',
+		fontSize: '.8rem',
 		fontWeight: 400
 	},
 	txt: {
 		width: '100%',
-		fontSize: '1rem',
+		fontSize: '.8rem',
 		wordWrap: 'break-word'
 	}
 }

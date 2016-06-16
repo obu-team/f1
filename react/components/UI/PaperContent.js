@@ -4,7 +4,7 @@ import Radium from 'radium'
 const style = {
 	width: '100%',
 	boxSizing: 'border-box',
-	padding: 30
+	padding: 20
 }
 
 const PaperContent = (props) => <div style={style}>{props.children}</div>

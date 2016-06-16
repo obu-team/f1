@@ -14,13 +14,13 @@ const styles = {
 		width: '100%',
 		minHeight: '100vh',
 		boxSizing: 'border-box',
-		padding: '100px 40px 40px 40px',
+		padding: '80px 20px 20px 20px',
 		background: colors.grey200
 	},
 	mansory: {
 		padding: 20,
 		boxSizing: 'border-box',
-		width: '33.33%'
+		width: '25%'
 	}
 }
 

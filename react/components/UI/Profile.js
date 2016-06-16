@@ -78,8 +78,8 @@ class Profile extends React.Component {
 		return (
 			<Paper>
 				{img}
+				<PaperHeader>{this.props.entity.name}</PaperHeader>
 				<PaperContent>
-					<PaperHeader>{this.props.entity.name}</PaperHeader>
 					<PaperUl>
 						{keys.map(k => {
 							return <PaperLi key={`${this.props.entity._id}-${k}`} head={Utils.capitalize(k)}>{Utils.formatEntityString(entity[k].value)}</PaperLi>

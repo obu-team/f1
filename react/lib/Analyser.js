@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import async from 'async'
 import Combinatorics from 'js-combinatorics'
+import {specialKeywords} from './Keywords'
 
 import Utils from './Utils'
 
@@ -11,7 +12,7 @@ class Analyser {
 		let grouped = _.groupBy(_profiles, 'type')
 		let keys = _.keys(grouped)
 		Analyser.evaluateProfiles(query, _profiles, profiles => {
-			cb({dates, profiles})
+			Analyser.dataCase(profiles, dates, summary => cb({dates, profiles}))
 		})
 	}
 
@@ -24,8 +25,11 @@ class Analyser {
 			if(_.indexOf(combinations, _.deburr(p.name.toLowerCase()))>-1) p.confident+=1
 			return p
 		}).orderBy(['confident', 'name'], ['desc', 'asc']).value()
-		console.log(ps)
 		cb(ps)
+	}
+
+	static dataCase(profiles, dates, cb) {
+		cb()
 	}
 }
 

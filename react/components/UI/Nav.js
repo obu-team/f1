@@ -11,7 +11,7 @@ const styles = {
 		width: '100%',
 		height: 70,
 		boxSizing: 'border-box',
-		padding: '15px 20px',
+		padding: '15px 40px',
 		position: 'fixed',
 		top: 0,
 		left: 0,
@@ -24,9 +24,9 @@ const styles = {
 	input: {
 		width: 400,
 		height: 40,
-		margin: '0px 30px',
 		display: 'inline-block',
-		padding: 0
+		padding: 0,
+		float: 'right'
 	},
 	inp: {
 		border: `1px solid ${colors.white}`,
