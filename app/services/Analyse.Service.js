@@ -34,10 +34,15 @@ class AnalyseService {
 
 	static compare(text, data, cb) {
 		let entities = []
+		let dates = []
 		async.parallel([
 			cb1 => AnalyseService.getRawEntities(text, (err, es) => {
 				if(err) return cb1(err)
 				entities.push(es)
+				cb1()
+			}),
+			cb1 => AnalyseService.getRawDates(text, ds => {
+				dates.push(ds)
 				cb1()
 			}),
 			cb1 => AnalyseService.analyseDrivers(data.drivers, (err, drivers) => {
@@ -59,7 +64,9 @@ class AnalyseService {
 			if(err) return cb(err)
 			entities = _.flattenDeep(entities)
 			entities = _.uniqBy(entities, 'ergastID')
-			_.forEach(data.dates, date => {
+			dates.push(data.dates)
+			dates = _(dates).flattenDeep().uniq().value()
+			_.forEach(dates, date => {
 				entities.push({
 					type: 'date',
 					name: date
@@ -67,6 +74,11 @@ class AnalyseService {
 			})
 			cb(null, entities)
 		})
+	}
+
+	static getRawDates(text, cb) {
+		let dates = _(text.split(' ')).filter(k => /^\d{4}$/.test(k)).uniq().value()
+		cb(dates || [])
 	}
 
 	static getRawEntities(text, cb) {

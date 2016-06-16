@@ -3,12 +3,6 @@ import _ from 'lodash'
 import moment from 'moment'
 
 class Utils {
-	static parseEntities(entities) {
-		let dates = _.filter(entities, e => e.type=='date')
-		let profiles = _.filter(entities, e => e.type!='date')
-		return {dates, profiles}
-	}
-
 	static capitalize(str) {
 		return _(str.split(/(?=[A-Z])/)).map(txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()).value().join(' ')
 	}
@@ -21,6 +15,17 @@ class Utils {
 			return moment(e, 'YYYY-MM-DD').format('LL')
 		}
 		return e
+	}
+
+	static naturalKeywordCombinations(keys) {
+		let chunks = keys.length
+		let ret = []
+		for(let x=1;x<=chunks;x++) {
+			for(let y=1;y<=(chunks-x+1);y++) {
+				ret.push(_.slice(keys, y-1, (y-1+x)).join(' '))
+			}
+		}
+		return ret
 	}
 }
 

@@ -34,7 +34,8 @@ var dependencies = [
   'react-dom',
   'react-router',
   'react-tap-event-plugin',
-  'reflux'
+  'reflux',
+  'js-combinatorics'
 ]
 
 var scriptsCount = 0

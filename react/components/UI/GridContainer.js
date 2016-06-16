@@ -3,7 +3,7 @@ import Radium from 'radium'
 import Masonry from 'react-masonry-component'
 
 import colors from '../../lib/colors'
-import Utils from '../../lib/Utils'
+import Analyser from '../../lib/Analyser'
 
 import Paper from './Paper'
 import PaperContent from './PaperContent'
@@ -40,7 +40,7 @@ class GridContainer extends React.Component {
 		this.parseEntities(nextProps)
 	}
 	parseEntities(props) {
-		this.setState(Utils.parseEntities(props.entities))
+		Analyser.parseEntities(this.props.query, props.entities, data => this.setState(data))
 	}
 	renderEmpty() {
 		return <Masonry elementType={'div'}><div style={styles.mansory}><Paper><PaperContent><span className='lnr lnr-cross' /> No results found</PaperContent></Paper></div></Masonry>

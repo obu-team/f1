@@ -12,7 +12,7 @@ class SearchGrid extends React.Component {
 		return (
 			<div>
 				<Nav onHome={this.props.onHome} recommend={this.props.recommend} value={this.props.value} onChange={this.props.onChange} onEnter={this.props.onEnter} onTab={this.props.onTab} />
-				<GridContainer entities={this.props.entities} />
+				<GridContainer query={this.props.query} entities={this.props.entities} />
 			</div>
 		)
 	}

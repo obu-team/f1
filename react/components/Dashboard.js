@@ -115,7 +115,7 @@ class Dashboard extends React.Component {
 		)
 	}
 	renderGrid() {
-		return <SearchGrid onHome={this.onHome} recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
+		return <SearchGrid query={this.state.src} onHome={this.onHome} recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
 	}
 	render() {
 		const {search, modal} = this.state

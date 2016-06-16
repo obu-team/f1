@@ -31,6 +31,7 @@
     "immutable": "*",
     "indico.io": "^0.9.4",
     "jquery": "*",
+    "js-combinatorics": "^0.5.2",
     "jsonwebtoken": "*",
     "lodash": "*",
     "maplace-js": "*",
