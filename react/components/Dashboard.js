@@ -40,7 +40,7 @@ const styles = {
 		}
 	},
 	bg: {
-		background: 'url(\'/img/bg2.jpg\') no-repeat center center',
+		background: 'url(\'/img/bg3.gif\') no-repeat center center',
 		backgroundSize: 'cover'
 	}
 }
