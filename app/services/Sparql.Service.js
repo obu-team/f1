@@ -43,6 +43,8 @@ class SparqlService {
 				let filterLangAbstract = 'LANG(?abstract)=\'en\''
 				let filterLangComment = 'LANG(?comment)=\'en\''
 
+				myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+				myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 				myquery.registerTriple({
 							'subject': resource,
 							'predicate': 'rdfs:label',
@@ -65,22 +67,22 @@ class SparqlService {
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:capacity',
+							'predicate': 'dbpprop:capacity',
 							'object': '?capacity }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:lengthKm',
+							'predicate': 'dbpprop:lengthKm',
 							'object': '?lengthKm }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:opened',
+							'predicate': 'dbpprop:opened',
 							'object': '?opened }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:capacity',
+							'predicate': 'dbpprop:capacity',
 							'object': '?capacity }'
 						})
 						.registerTriple({
@@ -109,10 +111,10 @@ class SparqlService {
 
 				console.log( myquery.sparqlQuery )
 
-				let sparqler = new sparqls.Client();
+				let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql');
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
-					console.log( data.results );
+					console.log( data.results )
 					cb(null, data)
 				})
 			}
@@ -138,6 +140,8 @@ class SparqlService {
 				let filterLangNationality = 'LANG(?nationality)=\'en\''
 				let filterLangComment = 'LANG(?comment)=\'en\''
 
+				myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+				myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 				myquery.registerTriple({
 							'subject': resource,
 							'predicate': 'foaf:name',
@@ -185,17 +189,17 @@ class SparqlService {
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:carNumber',
+							'predicate': 'dbpprop:carNumber',
 							'object': '?carNumber }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:nationality',
+							'predicate': 'dbpprop:nationality',
 							'object': '?nationality }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:firstRace',
+							'predicate': 'dbpprop:firstRace',
 							'object': '?firstRace }'
 						})
 						.filter(filterLangName)
@@ -205,10 +209,10 @@ class SparqlService {
 
 				console.log( myquery.sparqlQuery )
 
-				let sparqler = new sparqls.Client();
+				let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
-					console.log( data.results );
+					console.log( data.results )
 					cb(null, data)
 				})
 			}
@@ -233,6 +237,8 @@ class SparqlService {
 				let filterLangAbstract = 'LANG(?abstract)=\'en\''
 				let filterLangComment = 'LANG(?comment)=\'en\''
 
+				myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+				myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 				myquery.registerTriple({
 							'subject': resource,
 							'predicate': 'foaf:name',
@@ -260,47 +266,47 @@ class SparqlService {
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:base',
+							'predicate': 'dbpprop:base',
 							'object': '?base }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:consChamp',
+							'predicate': 'dbpprop:consChamp',
 							'object': '?consChamp }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:driversChamp',
+							'predicate': 'dbpprop:driversChamp',
 							'object': '?driversChamp }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:debut',
+							'predicate': 'dbpprop:debut',
 							'object': '?debut }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:fastestLaps',
+							'predicate': 'dbpprop:fastestLaps',
 							'object': '?fastestLaps }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:wins',
+							'predicate': 'dbpprop:wins',
 							'object': '?wins }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:poles',
+							'predicate': 'dbpprop:poles',
 							'object': '?poles }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:races',
+							'predicate': 'dbpprop:races',
 							'object': '?races }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbp:principal',
+							'predicate': 'dbpprop:principal',
 							'object': '?principal }'
 						})
 						.registerTriple({
@@ -314,10 +320,10 @@ class SparqlService {
 
 				console.log( myquery.sparqlQuery )
 
-				let sparqler = new sparqls.Client();
+				let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
-					console.log( data.results );
+					console.log( data.results )
 					cb(null, data)
 				})
 			}
@@ -340,13 +346,15 @@ class SparqlService {
 			'dbo:wikiPageRedirects': '?resource'
 		};
 
+		myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+		myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 		myquery
 			.selection( ['resource'] )
-			.registerVariable( 'x', x );
+			.registerVariable( 'x', x )
 
-		console.log( myquery.sparqlQuery );
+		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client()
+		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
 		sparqler.send(myquery, (err, data) => {
 			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
@@ -369,9 +377,11 @@ class SparqlService {
 					}
 				};
 
+				myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+				myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 				myquery
 					.selection( ['resource'] )
-					.registerVariable( 'resource', resource );
+					.registerVariable( 'resource', resource )
 
 				console.log( myquery.sparqlQuery );
 
@@ -407,6 +417,8 @@ class SparqlService {
 		}
 		let filterLangName = 'LANG(?name)=\'en\''
 
+		myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+		myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 		myquery.registerVariable('resource', resource)
 			   .registerVariable('name', name)
 
@@ -418,7 +430,7 @@ class SparqlService {
 
 		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client()
+		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
 		sparqler.send(myquery, (err, data) => {
 			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
@@ -449,12 +461,14 @@ class SparqlService {
 		}
 		let filterLangName = 'LANG(?name)=\'en\''
 
+		myquery.registerPrefix( 'dbo', '<http://dbpedia.org/ontology/>' )
+		myquery.registerPrefix( 'georss', '<http://www.georss.org/georss/>')
 		myquery.registerVariable('resource', resource)
 			   .registerVariable('name', name)
 
 		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client()
+		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
 		sparqler.send(myquery, (err, data) => {
 			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )

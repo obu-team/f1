@@ -251,7 +251,8 @@ sparqls.Client = function( endpoint ) {
 	this.endpoint = endpoint || 'http://dbpedia.org/sparql';
 	this.defaultParameters = {
 		'format': 'application/json',
-		'content-type': 'application/json'
+		'content-type': 'application/json',
+		'timeout': '600000' //10 minutes
 	};
 
 	this.init = function() {
