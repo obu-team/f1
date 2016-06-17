@@ -26,6 +26,11 @@ const styles = {
 		':hover': {
 			color: colors.red500
 		}
+	},
+	container: {
+		padding: 20,
+		boxSizing: 'border-box',
+		width: '100%'
 	}
 }
 
@@ -76,18 +81,20 @@ class Profile extends React.Component {
 		let href = _.has(entity, 'wikiPageID') ? <div><PaperLine /><PaperBtn href={`https://en.wikipedia.org/?curid=${entity.wikiPageID.value}`}>Read More</PaperBtn></div> : null
 		let keys = _(entity).keys().filter(k => _.indexOf(exclude, k)==-1).value()
 		return (
-			<Paper>
-				{img}
-				<PaperHeader>{this.props.entity.name}</PaperHeader>
-				<PaperContent>
-					<PaperUl>
-						{keys.map(k => {
-							return <PaperLi key={`${this.props.entity._id}-${k}`} head={Utils.capitalize(k)}>{Utils.formatEntityString(entity[k].value)}</PaperLi>
-						})}
-					</PaperUl>
-					{href}
-				</PaperContent>
-			</Paper>
+			<div style={styles.container}>
+				<Paper>
+					{img}
+					<PaperHeader>{this.props.entity.name}</PaperHeader>
+					<PaperContent>
+						<PaperUl>
+							{keys.map(k => {
+								return <PaperLi key={`${this.props.entity._id}-${k}`} head={Utils.capitalize(k)}>{Utils.formatEntityString(entity[k].value)}</PaperLi>
+							})}
+						</PaperUl>
+						{href}
+					</PaperContent>
+				</Paper>
+			</div>
 		)
 	}
 	renderAgainBtn() {

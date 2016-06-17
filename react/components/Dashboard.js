@@ -5,6 +5,7 @@ import async from 'async'
 
 import colors from '../lib/colors'
 import TextAnalysisService from '../services/TextAnalysis.Service'
+import Utils from '../lib/Utils'
 
 import Loader from './UI/Loader'
 import FullScreen from './UI/FullScreen'
@@ -78,12 +79,15 @@ class Dashboard extends React.Component {
 	}
 	onTab() {
 		let {src, recommend} = this.state
+		let newSrc = src + recommend
+		Utils.setQuery(newSrc)
 		this.setState({
-			src: src + recommend,
+			src: newSrc,
 			recommend: ''
 		})
 	}
 	onHome() {
+		Utils.setQuery('')
 		this.setState({
 			search: false,
 			modal: false,
@@ -95,6 +99,7 @@ class Dashboard extends React.Component {
 	search() {
 		if(!this.state.src) return false
 		let src = this.state.src + this.state.recommend
+		Utils.setQuery(src)
 		this.setState({
 			search: true,
 			src: src,
@@ -119,7 +124,7 @@ class Dashboard extends React.Component {
 		)
 	}
 	renderGrid() {
-		return <SearchGrid query={this.state.src} onHome={this.onHome} recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
+		return <SearchGrid onHome={this.onHome} recommend={this.state.recommend} value={this.state.src} onChange={this.onSrcChange} onEnter={this.search} onTab={this.onTab} entities={this.state.entities} />
 	}
 	render() {
 		const {search, modal} = this.state

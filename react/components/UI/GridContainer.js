@@ -3,11 +3,13 @@ import Radium from 'radium'
 
 import colors from '../../lib/colors'
 import Analyser from '../../lib/Analyser'
+import Utils from '../../lib/Utils'
 
 import MasonryGrid from './MasonryGrid'
 import Paper from './Paper'
 import PaperContent from './PaperContent'
 import Profile from './Profile'
+import Summary from './Summary'
 
 const styles = {
 	container: {
@@ -18,7 +20,6 @@ const styles = {
 		background: colors.grey200
 	},
 	mansory: {
-		padding: 20,
 		boxSizing: 'border-box',
 		width: '25%'
 	},
@@ -33,7 +34,8 @@ class GridContainer extends React.Component {
 		this.state = {
 			profiles: [],
 			dates: [],
-			summaries: []
+			summaries: [],
+			entities: []
 		}
 	}
 	componentWillMount() {
@@ -43,7 +45,9 @@ class GridContainer extends React.Component {
 		this.parseEntities(nextProps)
 	}
 	parseEntities(props) {
-		Analyser.parseEntities(this.props.query, props.entities, data => this.setState(data))
+		if(!_.isEqual(this.state.entities, props.entities)) {
+			Analyser.parseEntities(Utils.getQuery(), props.entities, data => this.setState({profiles: data.profiles, dates: data.dates, summaries: data.summaries, entities: props.entities}))
+		}
 	}
 	renderEmpty() {
 		return <MasonryGrid><div style={styles.mansory} className='gridItem'><Paper><PaperContent><span className='lnr lnr-cross' /> No results found</PaperContent></Paper></div></MasonryGrid>
@@ -51,6 +55,7 @@ class GridContainer extends React.Component {
 	renderContent() {
 		return (
 			<MasonryGrid>
+				{this.state.summaries.map(s => <div className='gridItem' key={s.name+s.type} style={[styles.mansory, styles.summary]}><Summary summary={s} /></div>)}
 				{this.state.profiles.map(p => <div className='gridItem' key={p._id} style={styles.mansory}><Profile entity={p} /></div>)}
 			</MasonryGrid>
 		)

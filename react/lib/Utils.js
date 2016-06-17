@@ -1,6 +1,9 @@
 import {DOM} from 'react'
 import _ from 'lodash'
 import moment from 'moment'
+import Masonry from 'masonry-layout'
+
+let query = ''
 
 class Utils {
 	static capitalize(str) {
@@ -35,6 +38,31 @@ class Utils {
 			if(_.indexOf(array, sbi)==-1) ret = false
 		})
 		return ret
+	}
+
+	static pluckValue(data, keys) {
+		_.forEach(keys, k => {
+			data = data[k]
+			if(_.isArray(data)) data = _.first(data)
+		})
+		return data
+	}
+
+	static reposition() {
+		let grid = document.querySelector('.masonryGrid')
+		new Masonry(grid, {
+	  	itemSelector: '.gridItem',
+	  	columnWidth: '.gridSizer',
+		  percentPosition: true
+	  })
+	}
+
+	static setQuery(q) {
+		query = q
+	}
+
+	static getQuery() {
+		return query
 	}
 }
 

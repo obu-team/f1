@@ -19,7 +19,7 @@ const styles = {
 		height: '100%',
 		boxSizing: 'border-box',
 		background: 'none',
-		border: `none`,
+		border: `1px solid ${colors.white}`,
 		fontWeight: 300,
 		padding: '5px 45px 5px 5px',
 		fontSize: '1rem',

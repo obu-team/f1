@@ -4,6 +4,8 @@ import Masonry from 'masonry-layout'
 import imagesLoaded from 'imagesloaded'
 import $ from 'jquery'
 
+import Utils from '../../lib/Utils'
+
 const styles = {
 	grid: {
 		width: '100%'
@@ -16,7 +18,6 @@ const styles = {
 class MasonryGrid extends React.Component {
 	constructor(props) {
 		super(props)
-		this.man = null
 	}
 	componentDidMount() {
 		this.gridLayout()
@@ -24,18 +25,13 @@ class MasonryGrid extends React.Component {
 	componentDidUpdate(nextProps, nextState) {
 		this.gridLayout()
 	}
-	componentWillReceiveProps(nextProps) {
+	/*componentWillReceiveProps(nextProps) {
 		this.gridLayout()
-	}
+	}*/
 	gridLayout() {
 		let grid = document.querySelector('.masonryGrid')
-		imagesLoaded(grid, () => {
-			this.man = new Masonry(grid, {
-		  	itemSelector: '.gridItem',
-		  	columnWidth: '.gridSizer',
-			  percentPosition: true
-		  })
-		})
+		Utils.reposition()
+		imagesLoaded(grid, () => Utils.reposition())
 	}
 	render() {
 		return (

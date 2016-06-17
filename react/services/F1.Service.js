@@ -51,6 +51,29 @@ class F1Service {
 		})
 	}
 
+	static getSummary(summary, cb) {
+		switch(summary.type) {
+			case 'raceCalendar':
+				F1Service.getRaceCalendar(summary.year, cb)
+				break
+			case 'driverStandings':
+				F1Service.getDriverSeasonResults(summary.year, cb)
+				break
+			case 'constructorStandings':
+				F1Service.getTeamSeasonResults(summary.year, cb)
+				break
+			case 'driverWorldTitles':
+				F1Service.getDriverWorldTitles(summary.driver, cb)
+				break
+			case 'driverSeasonFinishes':
+				F1Service.getDriverSeasonFinishes(summary.driver, cb)
+				break
+			default:
+				cb(true)
+				break
+		}
+	}
+
 	static getDriverSeasonResults(year, cb) {
 		F1Service.callApi(`http://ergast.com/api/f1/${year}/driverStandings.json`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
 	}
@@ -65,6 +88,14 @@ class F1Service {
 
 	static getDriverResultsBySeason(driver, year, cb) {
 		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/results.json`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverWorldTitles(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings/1/seasons.json`, ['SeasonTable', 'Seasons'], cb)
+	}
+
+	static getDriverSeasonFinishes(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings.json`, ['StandingsTable', 'StandingsLists'], cb)
 	}
 
 	static callApi(link, keys, cb) {
@@ -128,13 +159,40 @@ class F1Service {
 					key: ['position']
 				}, {
 					name: 'Team',
-					key: ['Constructors', 'name']
+					key: ['Constructor', 'name']
 				}, {
 					name: 'Points',
 					key: ['points']
 				}, {
 					name: 'Wins',
 					key: ['wins']
+				}]
+				break
+			case 'driverWorldTitles':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'driverSeasonFinishes':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'Position',
+					key: ['DriverStandings', 'position']
+				}, {
+					name: 'Points',
+					key: ['DriverStandings', 'points']
+				}, {
+					name: 'Wins',
+					key: ['DriverStandings', 'wins']
+				}, {
+					name: 'Team',
+					key: ['DriverStandings', 'Constructors', 'name']
 				}]
 				break
 			default:

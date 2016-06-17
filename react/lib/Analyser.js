@@ -13,7 +13,7 @@ class Analyser {
 		Analyser.evaluateProfiles(query, _profiles, profiles => {
 			Analyser.dataCase(query, profiles, dates, summaries => {
 				console.log(summaries)
-				cb({dates, profiles})
+				cb({dates, profiles, summaries})
 			})
 		})
 	}
@@ -62,12 +62,24 @@ class Analyser {
 
 			} else {
 				if(words.length) {
-					if(Utils.onlyInArray(words, ['calendar'])) return Analyser.getSeasonRaceCalendar(dates, cb)
-					if(Utils.onlyInArray(words, ['driver'])) return Analyser.getSeasonDriverStandings(dates, cb)
-					if(Utils.onlyInArray(words, ['team'])) return Analyser.getSeasonConstructorStandings(dates, cb)
+					if(Utils.onlyInArray(words, ['season'])) return Analyser.getSeasonSummary(dates, cb)
+					if(Utils.onlyInArray(words, ['standing']) || Utils.onlyInArray(words, ['season', 'standing'])) return Analyser.getSeasonResults(dates, cb)
+					if(Utils.onlyInArray(words, ['calendar']) || Utils.onlyInArray(words, ['calendar', 'season'])) return Analyser.getSeasonRaceCalendar(dates, cb)
+					if(Utils.onlyInArray(words, ['driver']) || Utils.onlyInArray(words, ['driver', 'standing']) || Utils.onlyInArray(words, ['driver', 'standing', 'season'])) return Analyser.getSeasonDriverStandings(dates, cb)
+					if(Utils.onlyInArray(words, ['team']) || Utils.onlyInArray(words, ['team', 'standing']) || Utils.onlyInArray(words, ['team', 'standing', 'season'])) return Analyser.getSeasonConstructorStandings(dates, cb)
 				} else {
 					return Analyser.getSeasonSummary(dates, cb)
 				}
+			}
+		} else {
+			if(Utils.onlyInArray(keys, ['driver'])) {
+				return Analyser.getDriverSummary(grouped.driver, cb)
+			}
+			if(Utils.onlyInArray(keys, ['team'])) {
+
+			}
+			if(Utils.onlyInArray(keys, ['track'])) {
+
 			}
 		}
 		cb([])
@@ -81,6 +93,22 @@ class Analyser {
 				type: 'raceCalendar',
 				year: date
 			}, {
+				name: `${date} Driver Standings`,
+				type: 'driverStandings',
+				year: date
+			}, {
+				name: `${date} Constructor Standings`,
+				type: 'constructorStandings',
+				year: date
+			}])
+			cb1()
+		}, err => cb(_.flatten(summaries)))
+	}
+
+	static getSeasonResults(dates, cb) {
+		let summaries = []
+		async.forEach(dates, (date, cb1) => {
+			summaries.push([{
 				name: `${date} Driver Standings`,
 				type: 'driverStandings',
 				year: date
@@ -127,6 +155,26 @@ class Analyser {
 			})
 			cb1()
 		}, err => cb(summaries))
+	}
+
+	static getDriverSummary(drivers, cb) {
+		let summaries = []
+		async.forEach(drivers, (driver, cb1) => {
+			summaries.push([{
+				name: `${driver.name} World Titles`,
+				type: 'driverWorldTitles',
+				driver: driver.ergastID
+			}, {
+				name: `${driver.name} Season Finishes`,
+				type: 'driverSeasonFinishes',
+				driver: driver.ergastID
+			}, {
+				name: `${driver.name} Season Finishes`,
+				type: 'driverTeams',
+				driver: driver.ergastID
+			}])
+			cb1()
+		}, err => cb(_.flatten(summaries)))
 	}
 }
 
