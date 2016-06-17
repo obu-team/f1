@@ -330,10 +330,41 @@ class SparqlService {
 		})
 	}
 
-	static getDriversFromCountryOrTeam(cb) {
+	static getDriversFromCountryOrTeam(entity, cb) {
 		let myquery = new sparqls.Query()
 
-		
+		let concept = {
+			'type': 'skos:Concept',
+			'skos:prefLabel': {
+				'value': '?label',
+				'filter': 'regex(str(?label), "^' + entity.name + '.* formula one.*drivers*.$", "i")'
+			}
+		}
+		let driver = {
+			'dct:subject': '?concept',
+			'foaf:givenName': {
+				'value': '?firstName',
+				'filter': 'LANG(?firstName) = "en" '
+			},
+			'foaf:surname': {
+				'value': '?lastName',
+				'filter': 'LANG(?lastName) = "en" '
+			}
+		}
+
+		myquery.registerPrefix('dct', '<http://purl.org/dc/terms/>')
+			   .selection( [ 'driver', 'firstName', 'lastName', 'name' ] )
+			   .registerVariable('concept', concept)
+			   .registerVariable('driver', driver)
+
+		console.log( myquery.sparqlQuery )
+
+		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+				sparqler.send(myquery, (err, data) => {
+					if(err || !data || !data.results) return cb(true)
+					console.log( data.results )
+					cb(null, data)
+				})
 	}
 
 	static findRacingTrackResourceSparql(entity, cb) {

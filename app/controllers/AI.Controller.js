@@ -37,6 +37,14 @@ class AIController {
 		})
 	}
 
+	static getDriversList(req, res) {
+		let entity = req.body
+		SparqlService.getDriversFromCountryOrTeam(entity, (err, data) => {
+			if(err) return res.sendStatus(500)
+			res.json(data)
+		})
+	}
+
 	static getDrivers(req, res) {
 		let {analyse} = req.body
 

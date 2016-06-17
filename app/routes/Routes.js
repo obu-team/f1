@@ -8,6 +8,7 @@ r.get('/', RootController.get)
 r.get('/ai/suggestions', AIController.getSuggestions)
 r.post('/ai/analyse', AIController.analyse)
 r.post('/ai/entity', AIController.getEntity)
+r.post('/ai/entity/list', AIController.getDriversList)
 r.post('/ai/drivers', AIController.getDrivers)
 
 r.use('*', RootController.all)
