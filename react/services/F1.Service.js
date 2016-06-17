@@ -83,6 +83,65 @@ class F1Service {
 			}, err => cb(err, data))
 		})
 	}
+
+	static resultsFormater(type) {
+		switch(type) {
+			case 'raceCalendar':
+				return [{
+					name: 'Round',
+					key: ['round']
+				}, {
+					name: 'Name',
+					key: ['raceName']
+				}, {
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'Circuit',
+					key: ['Circuit', 'circuitName']
+				}, {
+					name: 'Country',
+					key: ['Circuit', 'Location', 'country']
+				}]
+				break
+			case 'driverStandings':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'First Name',
+					key: ['Driver', 'givenName']
+				}, {
+					name: 'Last Name',
+					key: ['Driver', 'familyName']
+				}, {
+					name: 'Team',
+					key: ['Constructors', 'name']
+				}, {
+					name: 'Points',
+					key: ['points']
+				}]
+				break
+			case 'constructorStandings':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'Team',
+					key: ['Constructors', 'name']
+				}, {
+					name: 'Points',
+					key: ['points']
+				}, {
+					name: 'Wins',
+					key: ['wins']
+				}]
+				break
+			default:
+				return []
+				break
+		}
+	}
 }
 
 export default F1Service

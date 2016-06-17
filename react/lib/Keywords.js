@@ -8,6 +8,9 @@ export const specialKeywords = [{
 	key: 'season',
 	words: ['season', 'seasons']
 }, {
-	key: 'track',
-	words: ['track', 'tracks', 'circuit', 'circuits']
+	key: 'standing',
+	words: ['standing', 'standings']
+}, {
+	key: 'calendar',
+	words: ['calendar', 'calendars', 'schedule', 'scheduler', 'schedules']
 }]

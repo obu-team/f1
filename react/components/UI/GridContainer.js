@@ -1,11 +1,10 @@
 import React from 'react'
 import Radium from 'radium'
-//import Masonry from 'react-masonry-component'
 
 import colors from '../../lib/colors'
 import Analyser from '../../lib/Analyser'
 
-import Masonry from './MasonryGrid'
+import MasonryGrid from './MasonryGrid'
 import Paper from './Paper'
 import PaperContent from './PaperContent'
 import Profile from './Profile'
@@ -47,13 +46,13 @@ class GridContainer extends React.Component {
 		Analyser.parseEntities(this.props.query, props.entities, data => this.setState(data))
 	}
 	renderEmpty() {
-		return <Masonry><div style={styles.mansory} className='gridItem'><Paper><PaperContent><span className='lnr lnr-cross' /> No results found</PaperContent></Paper></div></Masonry>
+		return <MasonryGrid><div style={styles.mansory} className='gridItem'><Paper><PaperContent><span className='lnr lnr-cross' /> No results found</PaperContent></Paper></div></MasonryGrid>
 	}
 	renderContent() {
 		return (
-			<Masonry>
+			<MasonryGrid>
 				{this.state.profiles.map(p => <div className='gridItem' key={p._id} style={styles.mansory}><Profile entity={p} /></div>)}
-			</Masonry>
+			</MasonryGrid>
 		)
 	}
 	render() {

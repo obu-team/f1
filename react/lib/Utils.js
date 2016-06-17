@@ -27,6 +27,15 @@ class Utils {
 		}
 		return ret
 	}
+
+	static onlyInArray(array, shouldBeIn) {
+		if(array.length != shouldBeIn.length) return false
+		let ret = true
+		_.forEach(shouldBeIn, sbi => {
+			if(_.indexOf(array, sbi)==-1) ret = false
+		})
+		return ret
+	}
 }
 
 export default Utils

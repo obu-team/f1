@@ -4,6 +4,7 @@ const async = require('async')
 const Database = require('../lib/Database')
 const AnalyseService = require('../services/Analyse.Service')
 const SparqlService = require('../services/Sparql.Service')
+const F1Service = require('../services/F1.Service')
 
 const Entity = Database.model('Entity')
 
@@ -38,10 +39,13 @@ class AIController {
 	}
 
 	static getDriversList(req, res) {
-		let entity = req.body
-		SparqlService.getDriversFromCountryOrTeam(entity, (err, data) => {
+		let entity = req.body.name
+		F1Service.getCircuitCountry(entity, (err, d) => {
 			if(err) return res.sendStatus(500)
-			res.json(data)
+			SparqlService.getDriversFromCountryOrTeam({name: d}, (err, data) => {
+				if(err) return res.sendStatus(500)
+				res.json(data)
+			})
 		})
 	}
 

@@ -12,6 +12,7 @@ const Entity = Database.model('Entity')
 class AnalyseService {
 	static analyseText(text, cb) {
 		let data = {}
+		data.dates = []
 		async.parallel([
 			cb => AIService.keywords('textRazor', text, (err, r) => {
 				if(err) return cb(err)
@@ -20,12 +21,12 @@ class AnalyseService {
 				data.gps = r.gps
 				data.teams = r.teams
 				cb()
-			}),
+			})/*,
 			cb => AIService.dates('alchemy', text, (err, r) => {
 				if(err) return cb(err)
 				data.dates = r
 				cb()
-			})
+			})*/
 		], err => {
 			if(err) return cb(err)
 			AnalyseService.compare(text, data, cb)

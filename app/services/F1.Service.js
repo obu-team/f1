@@ -28,6 +28,14 @@ class F1Service {
 			cb(null, res.body.MRData.CircuitTable.Circuits)
 		})
 	}
+
+	static getCircuitCountry(id, cb) {
+		$.get(`${Consts.ergastUrl}/circuits/${id}.json`)
+		.end((err, res) => {
+			if(err || !res.body.MRData.CircuitTable.Circuits.length) return cb(true)
+			cb(null, _.first(res.body.MRData.CircuitTable.Circuits).Location.country.toLowerCase())
+		})
+	}
 }
 
 module.exports = F1Service

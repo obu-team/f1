@@ -4,13 +4,17 @@ import Combinatorics from 'js-combinatorics'
 import {specialKeywords} from './Keywords'
 
 import Utils from './Utils'
+import F1Service from '../services/F1.Service'
 
 class Analyser {
 	static parseEntities(query, entities, cb) {
-		let dates = _.filter(entities, e => e.type=='date')
+		let dates = _(entities).filter(e => e.type=='date').map('name').value()
 		let _profiles = _.filter(entities, e => e.type!='date')
 		Analyser.evaluateProfiles(query, _profiles, profiles => {
-			Analyser.dataCase(profiles, dates, summaries => cb({dates, profiles}))
+			Analyser.dataCase(query, profiles, dates, summaries => {
+				console.log(summaries)
+				cb({dates, profiles})
+			})
 		})
 	}
 
@@ -47,18 +51,82 @@ class Analyser {
 		cb(profs)
 	}
 
-	static dataCase(profiles, dates, cb) {
-		let summaries = []
+	static dataCase(query, profiles, dates, cb) {
+		let keywords = _(query.split(' ')).map(k => _.deburr(k.toLowerCase())).uniq().value()
+		let combinations = Utils.naturalKeywordCombinations(keywords)
+		let words = _(specialKeywords).filter(sk => _.intersection(sk.words, combinations).length).map('key').uniq().value()
 		let grouped = _.groupBy(profiles, 'type')
 		let keys = _.keys(grouped)
 		if(dates.length) {
 			if(profiles.length) {
 
 			} else {
-
+				if(words.length) {
+					if(Utils.onlyInArray(words, ['calendar'])) return Analyser.getSeasonRaceCalendar(dates, cb)
+					if(Utils.onlyInArray(words, ['driver'])) return Analyser.getSeasonDriverStandings(dates, cb)
+					if(Utils.onlyInArray(words, ['team'])) return Analyser.getSeasonConstructorStandings(dates, cb)
+				} else {
+					return Analyser.getSeasonSummary(dates, cb)
+				}
 			}
 		}
-		cb(summaries)
+		cb([])
+	}
+
+	static getSeasonSummary(dates, cb) {
+		let summaries = []
+		async.forEach(dates, (date, cb1) => {
+			summaries.push([{
+				name: `${date} Race Calendar`,
+				type: 'raceCalendar',
+				year: date
+			}, {
+				name: `${date} Driver Standings`,
+				type: 'driverStandings',
+				year: date
+			}, {
+				name: `${date} Constructor Standings`,
+				type: 'constructorStandings',
+				year: date
+			}])
+			cb1()
+		}, err => cb(_.flatten(summaries)))
+	}
+
+	static getSeasonRaceCalendar(dates, cb) {
+		let summaries = []
+		async.forEach(dates, (date, cb1) => {
+			summaries.push({
+				name: `${date} Race Calendar`,
+				type: 'raceCalendar',
+				year: date
+			})
+			cb1()
+		}, err => cb(summaries))
+	}
+
+	static getSeasonDriverStandings(dates, cb) {
+		let summaries = []
+		async.forEach(dates, (date, cb1) => {
+			summaries.push({
+				name: `${date} Driver Standings`,
+				type: 'driverStandings',
+				year: date
+			})
+			cb1()
+		}, err => cb(summaries))
+	}
+
+	static getSeasonConstructorStandings(dates, cb) {
+		let summaries = []
+		async.forEach(dates, (date, cb1) => {
+			summaries.push({
+				name: `${date} Constructor Standings`,
+				type: 'constructorStandings',
+				year: date
+			})
+			cb1()
+		}, err => cb(summaries))
 	}
 }
 
