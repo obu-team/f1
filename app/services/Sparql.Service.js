@@ -31,7 +31,7 @@ class SparqlService {
 			if(!data) return cb(null, null) // not found track
 			if(!data.dbpediaID)
 				SparqlService.findRacingTrackResourceSparql(data, (err, data) => {
-					if(err) return cb(err)
+					if(err || !data) return cb(new Error('Not found!'))
 					return SparqlService.getTrack(entity, cb)
 				})
 			else{
@@ -127,7 +127,7 @@ class SparqlService {
 			if(!data) return cb(null, null) // not found racing driver
 			if(!data.dbpediaID)
 				SparqlService.findRacingDriverResourceSparql(data, (err, data) => {
-					if(err) return cb(err)
+					if(err || !data) return cb(err)
 					return SparqlService.getRacingDriver(entity, cb)
 				})
 			else{
@@ -225,7 +225,7 @@ class SparqlService {
 			if(!data) return cb(null, null) // not found racing team
 			if(!data.dbpediaID)
 				SparqlService.findRacingTeamResourceSparql(data, (err, data) => {
-					if(err) return cb(err)
+					if(err || !data) return cb(err)
 					return SparqlService.getRacingTeam(entity, cb)
 				})
 			else{
