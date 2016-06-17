@@ -127,7 +127,7 @@ class SparqlService {
 			if(!data) return cb(null, null) // not found racing driver
 			if(!data.dbpediaID)
 				SparqlService.findRacingDriverResourceSparql(data, (err, data) => {
-					if(err || !data) return cb(err)
+					if(err || !data) return cb(new Error('Not found!'))
 					return SparqlService.getRacingDriver(entity, cb)
 				})
 			else{
@@ -225,7 +225,7 @@ class SparqlService {
 			if(!data) return cb(null, null) // not found racing team
 			if(!data.dbpediaID)
 				SparqlService.findRacingTeamResourceSparql(data, (err, data) => {
-					if(err || !data) return cb(err)
+					if(err || !data) return cb(new Error('Not found!'))
 					return SparqlService.getRacingTeam(entity, cb)
 				})
 			else{
@@ -331,11 +331,13 @@ class SparqlService {
 	}
 
 	static getDriversFromCountryOrTeam(cb) {
-		var myquery = new sparqls.Query();
+		let myquery = new sparqls.Query()
+
+		
 	}
 
 	static findRacingTrackResourceSparql(entity, cb) {
-		let myquery = new sparqls.Query();
+		let myquery = new sparqls.Query()
 
 		let x = {
 			'rdfs:label': {
