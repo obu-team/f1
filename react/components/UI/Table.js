@@ -33,7 +33,8 @@ const styles = {
 	cell: {
 		padding: 10,
 		display: 'table-cell',
-		verticalAlign: 'middle'
+		verticalAlign: 'middle',
+		wordWrap: 'break-word'
 	}
 }
 

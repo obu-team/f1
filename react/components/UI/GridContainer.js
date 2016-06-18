@@ -10,6 +10,8 @@ import Paper from './Paper'
 import PaperContent from './PaperContent'
 import Profile from './Profile'
 import Summary from './Summary'
+import Loader from './Loader'
+import CenterContainer from './CenterContainer'
 
 const styles = {
 	container: {
@@ -35,7 +37,8 @@ class GridContainer extends React.Component {
 			profiles: [],
 			dates: [],
 			summaries: [],
-			entities: []
+			entities: [],
+			loaded: false
 		}
 	}
 	componentWillMount() {
@@ -45,9 +48,9 @@ class GridContainer extends React.Component {
 		this.parseEntities(nextProps)
 	}
 	parseEntities(props) {
-		if(!_.isEqual(this.state.entities, props.entities)) {
-			Analyser.parseEntities(Utils.getQuery(), props.entities, data => this.setState({profiles: data.profiles, dates: data.dates, summaries: data.summaries, entities: props.entities}))
-		}
+		//if(!_.isEqual(this.state.entities, props.entities)) {
+			Analyser.parseEntities(Utils.getQuery(), props.entities, data => this.setState({profiles: data.profiles, dates: data.dates, summaries: data.summaries, entities: props.entities, loaded: true}))
+		//}
 	}
 	renderEmpty() {
 		return <MasonryGrid><div style={styles.mansory} className='gridItem'><Paper><PaperContent><span className='lnr lnr-cross' /> No results found</PaperContent></Paper></div></MasonryGrid>
@@ -60,8 +63,19 @@ class GridContainer extends React.Component {
 			</MasonryGrid>
 		)
 	}
+	renderLoader() {
+		return <MasonryGrid><div style={styles.mansory} className='gridItem'><Paper><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper></div></MasonryGrid>
+	}
 	render() {
-		let cnt = this.props.entities.length ? this.renderContent() : this.renderEmpty()
+		let {profiles, summaries, loaded} = this.state
+		let cnt = null
+		if(!loaded) {
+			cnt = this.renderLoader()
+		} else if(!profiles.length && !summaries.length) {
+			cnt = this.renderEmpty()
+		} else {
+			cnt = this.renderContent()
+		}
 		return <div style={styles.container}>{cnt}</div>
 	}
 }

@@ -13,4 +13,16 @@ export const specialKeywords = [{
 }, {
 	key: 'calendar',
 	words: ['calendar', 'calendars', 'schedule', 'scheduler', 'schedules']
+}, {
+	key: 'current',
+	words: ['current', 'right now', 'currently', 'this year', 'this years', 'this year\'s']
+}, {
+	key: 'summary',
+	words: ['summary', 'summaries', 'overview', 'overviews']
+}, {
+	key: 'next',
+	words: ['next race', 'next races', 'next gp', 'next grand prix', 'next venue', 'next venues', 'next circuit', 'next track', 'next tracks', 'next circuits']
+}, {
+	key: 'title',
+	words: ['title', 'titles', 'world title', 'world championship', 'world championships', 'champion of the world', 'championship', 'championships']
 }]

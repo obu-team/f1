@@ -28,9 +28,12 @@ class Summary extends React.Component {
 			loading: true,
 			ths: []
 		}
+		this.mounted = false
 	}
 	componentWillMount() {
+		this.mounted = true
 		F1Service.getSummary(this.props.summary, (err, data) => {
+			if(!this.mounted) return false
 			if(err) {
 				this.setState({loading: false, error: true})
 			} else {
@@ -40,8 +43,11 @@ class Summary extends React.Component {
 			}
 		})
 	}
+	componentWillUnmount() {
+		this.mounted = false
+	}
 	renderLoader() {
-		return <Paper><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper>
+		return <div style={style}><Paper><PaperHeader>{this.props.summary.name}</PaperHeader><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper></div>
 	}
 	render() {
 		const {loading, data, error, ths} = this.state

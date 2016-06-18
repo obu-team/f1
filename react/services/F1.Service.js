@@ -68,6 +68,15 @@ class F1Service {
 			case 'driverSeasonFinishes':
 				F1Service.getDriverSeasonFinishes(summary.driver, cb)
 				break
+			case 'driverTeams':
+				F1Service.getDriverTeams(summary.driver, cb)
+				break
+			case 'driverSeasonStanding':
+				F1Service.getDriverSeasonStanding(summary.driver, cb)
+				break
+			case 'nextRace':
+				F1Service.getNextRace(cb)
+				break
 			default:
 				cb(true)
 				break
@@ -96,6 +105,18 @@ class F1Service {
 
 	static getDriverSeasonFinishes(driver, cb) {
 		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings.json`, ['StandingsTable', 'StandingsLists'], cb)
+	}
+
+	static getDriverTeams(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/constructors.json`, ['ConstructorTable', 'Constructors'], cb)
+	}
+
+	static getDriverSeasonStanding(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/current/drivers/${driver}/driverStandings.json`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
+	}
+
+	static getNextRace(cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/current/next.json`, ['RaceTable', 'Races'], cb)
 	}
 
 	static callApi(link, keys, cb) {
@@ -193,6 +214,51 @@ class F1Service {
 				}, {
 					name: 'Team',
 					key: ['DriverStandings', 'Constructors', 'name']
+				}]
+				break
+			case 'driverTeams':
+				return [{
+					name: 'Team',
+					key: ['name']
+				}, {
+					name: 'Nationality',
+					key: ['nationality']
+				}, {
+					name: 'More Info',
+					key: ['url']
+				}]
+				break
+			case 'driverSeasonStanding':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'Points',
+					key: ['points']
+				}, {
+					name: 'Wins',
+					key: ['wins']
+				}, {
+					name: 'Team',
+					key: ['Constructors', 'name']
+				}]
+				break
+			case 'nextRace':
+				return [{
+					name: 'Round',
+					key: ['round']
+				}, {
+					name: 'Name',
+					key: ['raceName']
+				}, {
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'Circuit',
+					key: ['Circuit', 'circuitName']
+				}, {
+					name: 'Country',
+					key: ['Circuit', 'Location', 'country']
 				}]
 				break
 			default:
