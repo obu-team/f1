@@ -111,6 +111,22 @@ class F1Service {
 		F1Service.callApi(`http://ergast.com/api/f1/current/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races', 'Results'], cb)
 	}
 
+	static getDriverRaceResultsByTeam(driver, team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/constructors/${team}/drivers/${driver}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverRaceResultsByTrack(driver, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/circuits/${track}/drivers/${driver}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getTeamAttendanceByTrack(team, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/circuits/${track}/constructors/${team}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverRaceResultsByTeamAndTrack(driver, team, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/constructors/${team}/drivers/${driver}/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
 	static callApi(link, keys, cb) {
 		$.get(link)
 		.end((err, res) => {
@@ -171,6 +187,18 @@ class F1Service {
 				break
 			case 'currentTrackResults':
 				F1Service.getCurrentTrackResults(summary.track, cb)
+				break
+			case 'driverRaceResultsByTeam':
+				F1Service.getDriverRaceResultsByTeam(summary.driver, summary.team, cb)
+				break
+			case 'driverRaceResultsByTrack':
+				F1Service.getDriverRaceResultsByTrack(summary.driver, summary.track, cb)
+				break
+			case 'teamAttendanceByTrack':
+				F1Service.getTeamAttendanceByTrack(summary.team, summary.track, cb)
+				break
+			case 'driverRaceResultsByTeamAndTrack':
+				F1Service.getDriverRaceResultsByTeamAndTrack(summary.driver, summary.team, summary.track, cb)
 				break
 			default:
 				cb(true)
@@ -388,6 +416,63 @@ class F1Service {
 				}, {
 					name: 'Team',
 					key: ['Constructor', 'name']
+				}]
+				break
+			case 'driverRaceResultsByTeam':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['Results', 'position']
+				}]
+				break
+			case 'driverRaceResultsByTrack':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['Results', 'position']
+				}, {
+					name: 'Team',
+					key: ['Results', 'Constructor', 'name']
+				}]
+				break
+			case 'teamAttendanceByTrack':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'Round',
+					key: ['round']
+				}]
+				break
+			case 'driverRaceResultsByTeamAndTrack':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['Results', 'position']
+				}, {
+					name: 'More info',
+					key: ['url']
 				}]
 				break
 			default:

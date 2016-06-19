@@ -73,10 +73,16 @@ class Analyser {
 			else if(Utils.onlyInArray(keys, ['team'])) return Analyser.getDataInfo(grouped.team, Analyser.inspectTeamData(words), cb)
 			else if(Utils.onlyInArray(keys, ['track'])) return Analyser.getDataInfo(grouped.track, Analyser.inspectTrackData(words), cb)
 			else if(Utils.onlyInArray(keys, ['driver', 'team'])) {
-				let driverData = Analyser.inspectDriverData(words)
-				let teamData = Analyser.inspectTeamData(words)
+				let driverData = Analyser.inspectDriverData(words, true)
+				let teamData = Analyser.inspectTeamData(words, true)
+				let combos = []
+				_.forEach(grouped.driver, d => {_.forEach(grouped.team, t => combos.push({driver: d, team: t}))})
 				let summaries = []
 				return async.parallel([
+					cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTeam'], sum => {
+						summaries.push(sum)
+						cb1()
+					}),
 					cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
 						summaries.push(sum)
 						cb1()
@@ -90,13 +96,74 @@ class Analyser {
 				})
 			}
 			else if(Utils.onlyInArray(keys, ['driver', 'track'])) {
-
+				let driverData = Analyser.inspectDriverData(words, true)
+				let trackData = Analyser.inspectTrackData(words, true)
+				let combos = []
+				_.forEach(grouped.driver, d => {_.forEach(grouped.track, t => combos.push({driver: d, track: t}))})
+				let summaries = []
+				return async.parallel([
+					cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTrack'], sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.track, trackData, sum => {
+						summaries.push(sum)
+						cb1()
+					})
+				], () => {
+					cb(_.flatten(summaries))
+				})
 			}
 			else if(Utils.onlyInArray(keys, ['team', 'track'])) {
-
+				let teamData = Analyser.inspectTeamData(words, true)
+				let trackData = Analyser.inspectTrackData(words, true)
+				let combos = []
+				_.forEach(grouped.team, d => {_.forEach(grouped.track, t => combos.push({team: d, track: t}))})
+				let summaries = []
+				return async.parallel([
+					cb1 => Analyser.getDataInfo(combos, ['teamAttendanceByTrack'], sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.track, trackData, sum => {
+						summaries.push(sum)
+						cb1()
+					})
+				], () => {
+					cb(_.flatten(summaries))
+				})
 			}
 			else if(Utils.onlyInArray(keys, ['driver', 'team', 'track'])) {
-
+				let driverData = Analyser.inspectDriverData(words, true)
+				let teamData = Analyser.inspectTeamData(words, true)
+				let trackData = Analyser.inspectTrackData(words, true)
+				let combos = []
+				_.forEach(grouped.driver, d => {_.forEach(grouped.team, t => {_.forEach(grouped.track, tr => combos.push({driver: d, team: t, track: tr}))})})
+				let summaries = []
+				return async.parallel([
+					cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTeamAndTrack'], sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
+						summaries.push(sum)
+						cb1()
+					})
+				], () => {
+					cb(_.flatten(summaries))
+				})
 			}
 			else if(words.length) {
 				if(Utils.onlyInArray(words, ['next'])) return Analyser.getDataInfo(['current'], ['nextRace'], cb)
@@ -120,8 +187,8 @@ class Analyser {
 		cb([])
 	}
 
-	static inspectDriverData(words) {
-		let apiData = ['driverSeasonStanding', 'driverWorldTitles', 'driverSeasonFinishes', 'driverTeams']
+	static inspectDriverData(words, empty = false) {
+		let apiData = empty ? [] : ['driverSeasonStanding', 'driverWorldTitles', 'driverSeasonFinishes', 'driverTeams']
 		if(Utils.oneOfCombinations(words, ['current', 'standing', 'driver'], ['current'])) apiData = ['driverSeasonStanding']
 		else if(Utils.oneOfCombinations(words, ['title', 'driver'], ['title'])) apiData = ['driverWorldTitles']
 		else if(Utils.oneOfCombinations(words, ['season', 'driver', 'standing'], ['season'])) apiData = ['driverSeasonFinishes']
@@ -137,8 +204,8 @@ class Analyser {
 		return apiData
 	}
 
-	static inspectTeamData(words) {
-		let apiData = ['teamSeasonStanding', 'teamWorldTitles', 'teamSeasonFinishes', 'teamDrivers']
+	static inspectTeamData(words, empty = false) {
+		let apiData = empty ? [] : ['teamSeasonStanding', 'teamWorldTitles', 'teamSeasonFinishes', 'teamDrivers']
 		if(Utils.oneOfCombinations(words, ['current', 'standing', 'team'], ['current'])) apiData = ['teamSeasonStanding']
 		else if(Utils.oneOfCombinations(words, ['title', 'team'], ['title'])) apiData = ['teamWorldTitles']
 		else if(Utils.oneOfCombinations(words, ['season', 'team', 'standing'], ['season'])) apiData = ['teamSeasonFinishes']
@@ -154,8 +221,8 @@ class Analyser {
 		return apiData
 	}
 
-	static inspectTrackData(words) {
-		let apiData = ['trackWinners']
+	static inspectTrackData(words, empty = false) {
+		let apiData = empty ? [] : ['trackWinners']
 		if(Utils.oneOfCombinations(words, ['current', 'standing'])) apiData = ['currentTrackResults']
 		return apiData
 	}
@@ -218,6 +285,27 @@ class Analyser {
 				name: `${moment().format('YYYY')} ${d.name} Results`,
 				type: 'currentTrackResults',
 				track: d.ergastID
+			}, {
+				name: `${d.driver ? d.driver.name : ''} in ${d.team ? d.team.name : ''} Race Results`,
+				type: 'driverRaceResultsByTeam',
+				driver: d.driver ? d.driver.ergastID : null,
+				team: d.team ? d.team.ergastID : null
+			}, {
+				name: `${d.driver ? d.driver.name : ''} in ${d.track ? d.track.name : ''} Race Results`,
+				type: 'driverRaceResultsByTrack',
+				driver: d.driver ? d.driver.ergastID : null,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.team ? d.team.name : ''} in ${d.track ? d.track.name : ''} Attendance`,
+				type: 'teamAttendanceByTrack',
+				team: d.team ? d.team.ergastID : null,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.driver ? d.driver.name : ''} in ${d.team ? d.team.name : ''} ${d.track ? d.track.name : ''} Race Results`,
+				type: 'driverRaceResultsByTeamAndTrack',
+				driver: d.driver ? d.driver.ergastID : null,
+				team: d.team ? d.team.ergastID : null,
+				track: d.track ? d.track.ergastID : null
 			}], _d => _.indexOf(selection, _d.type)>-1))
 			cb1()
 		}, err => cb(_.flatten(summaries)))

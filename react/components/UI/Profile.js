@@ -73,7 +73,7 @@ class Profile extends React.Component {
 		})
 	}
 	renderLoader() {
-		return <Paper><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper>
+		return <div style={styles.container}><Paper><PaperContent><CenterContainer><Loader /></CenterContainer></PaperContent></Paper></div>
 	}
 	renderContent() {
 		let {entity} = this.state
