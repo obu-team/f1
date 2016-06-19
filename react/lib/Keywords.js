@@ -18,7 +18,7 @@ export const specialKeywords = [{
 	words: ['current', 'right now', 'currently', 'this year', 'this years', 'this year\'s']
 }, {
 	key: 'summary',
-	words: ['summary', 'summaries', 'overview', 'overviews']
+	words: ['summary', 'summaries', 'overview', 'overviews', 'everything']
 }, {
 	key: 'next',
 	words: ['next race', 'next races', 'next gp', 'next grand prix', 'next venue', 'next venues', 'next circuit', 'next track', 'next tracks', 'next circuits']

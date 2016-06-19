@@ -13,7 +13,6 @@ class Analyser {
 		let _profiles = _.filter(entities, e => e.type!='date')
 		Analyser.evaluateProfiles(query, _profiles, profiles => {
 			Analyser.dataCase(query, profiles, dates, summaries => {
-				//console.log(summaries)
 				cb({dates, profiles, summaries})
 			})
 		})
@@ -53,7 +52,7 @@ class Analyser {
 	}
 
 	static dataCase(query, profiles, dates, cb) {
-		let keywords = _(query.split(' ')).map(k => _.deburr(k.toLowerCase())).uniq().value()
+		let keywords = _(query.split(' ')).map(k => _.deburr(k.toLowerCase())).value()
 		let combinations = Utils.naturalKeywordCombinations(keywords)
 		let words = _(specialKeywords).filter(sk => _.intersection(sk.words, combinations).length).map('key').uniq().value()
 		let grouped = _.groupBy(profiles, 'type')
@@ -70,23 +69,95 @@ class Analyser {
 				return Analyser.getDataInfo(dates, apiData, cb)
 			}
 		} else {
-			if(Utils.onlyInArray(keys, ['driver'])) {
-				let apiData = ['driverSeasonStanding', 'driverWorldTitles', 'driverSeasonFinishes', 'driverTeams']
-				if(Utils.oneOfCombinations(words, ['current', 'standing', 'driver'], ['standing'])) apiData = ['driverSeasonStanding']
-				else if(Utils.oneOfCombinations(words, ['title', 'driver'], ['title'])) apiData = ['driverWorldTitles']
-				return Analyser.getDataInfo(grouped.driver, apiData, cb)
-			} else if(Utils.onlyInArray(keys, ['team'])) {
+			if(Utils.onlyInArray(keys, ['driver'])) return Analyser.getDataInfo(grouped.driver, Analyser.inspectDriverData(words), cb)
+			else if(Utils.onlyInArray(keys, ['team'])) return Analyser.getDataInfo(grouped.team, Analyser.inspectTeamData(words), cb)
+			else if(Utils.onlyInArray(keys, ['track'])) return Analyser.getDataInfo(grouped.track, Analyser.inspectTrackData(words), cb)
+			else if(Utils.onlyInArray(keys, ['driver', 'team'])) {
+				let driverData = Analyser.inspectDriverData(words)
+				let teamData = Analyser.inspectTeamData(words)
+				let summaries = []
+				return async.parallel([
+					cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
+						summaries.push(sum)
+						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
+						summaries.push(sum)
+						cb1()
+					})
+				], () => {
+					cb(_.flatten(summaries))
+				})
+			}
+			else if(Utils.onlyInArray(keys, ['driver', 'track'])) {
 
-			} else if(Utils.onlyInArray(keys, ['track'])) {
+			}
+			else if(Utils.onlyInArray(keys, ['team', 'track'])) {
 
-			} else if(words.length) {
+			}
+			else if(Utils.onlyInArray(keys, ['driver', 'team', 'track'])) {
+
+			}
+			else if(words.length) {
 				if(Utils.onlyInArray(words, ['next'])) return Analyser.getDataInfo(['current'], ['nextRace'], cb)
 				else if(Utils.oneOfCombinations(words, ['current', 'season', 'summary'], ['current', 'summary'])) return Analyser.getDataInfo(['current'], ['nextRace', 'raceCalendar','driverStandings', 'constructorStandings'], cb)
+				else if(Utils.oneOfCombinations(words, ['current', 'season', 'standing', 'driver'], ['current', 'standing', 'driver'])) return Analyser.getDataInfo(['current'], ['driverStandings'], cb)
+				else if(Utils.oneOfCombinations(words, ['current', 'season', 'standing', 'team'], ['current', 'standing', 'team'])) return Analyser.getDataInfo(['current'], ['constructorStandings'], cb)
 				else if(Utils.oneOfCombinations(words, ['current', 'season', 'standing'], ['current', 'standing'])) return Analyser.getDataInfo(['current'], ['driverStandings', 'constructorStandings'], cb)
 				else if(Utils.oneOfCombinations(words, ['current', 'season', 'calendar'], ['current', 'calendar'])) return Analyser.getDataInfo(['current'], ['raceCalendar'], cb)
+				else if(_.indexOf(words, 'current')>-1) {
+					let apiData = []
+					if(_.indexOf(words, 'next')>-1) apiData.push('nextRace')
+					if(_.indexOf(words, 'standing')>-1 && _.indexOf(words, 'driver')==-1 && _.indexOf(words, 'team')==-1) apiData.push(['driverStandings', 'constructorStandings'])
+					if(_.indexOf(words, 'driver')>-1) apiData.push('driverStandings')
+					if(_.indexOf(words, 'team')>-1) apiData.push('constructorStandings')
+					if(_.indexOf(words, 'calendar')>-1) apiData.push('raceCalendar')
+					apiData = _.flatten(apiData)
+					if(apiData.length) return Analyser.getDataInfo(['current'], apiData, cb)
+				}
 			}
 		}
 		cb([])
+	}
+
+	static inspectDriverData(words) {
+		let apiData = ['driverSeasonStanding', 'driverWorldTitles', 'driverSeasonFinishes', 'driverTeams']
+		if(Utils.oneOfCombinations(words, ['current', 'standing', 'driver'], ['current'])) apiData = ['driverSeasonStanding']
+		else if(Utils.oneOfCombinations(words, ['title', 'driver'], ['title'])) apiData = ['driverWorldTitles']
+		else if(Utils.oneOfCombinations(words, ['season', 'driver', 'standing'], ['season'])) apiData = ['driverSeasonFinishes']
+		else if(Utils.oneOfCombinations(words, ['team', 'driver'], ['team'])) apiData = ['driverTeams']
+		else {
+			let _apiData = []
+			if(_.indexOf(words, 'current')>-1) _apiData.push('driverSeasonStanding')
+			if(_.indexOf(words, 'title')>-1) _apiData.push('driverWorldTitles')
+			if(_.indexOf(words, 'season')>-1) _apiData.push('driverSeasonFinishes')
+			if(_.indexOf(words, 'team')>-1) _apiData.push('driverTeams')
+			apiData = _apiData.length ? _apiData : apiData
+		}
+		return apiData
+	}
+
+	static inspectTeamData(words) {
+		let apiData = ['teamSeasonStanding', 'teamWorldTitles', 'teamSeasonFinishes', 'teamDrivers']
+		if(Utils.oneOfCombinations(words, ['current', 'standing', 'team'], ['current'])) apiData = ['teamSeasonStanding']
+		else if(Utils.oneOfCombinations(words, ['title', 'team'], ['title'])) apiData = ['teamWorldTitles']
+		else if(Utils.oneOfCombinations(words, ['season', 'team', 'standing'], ['season'])) apiData = ['teamSeasonFinishes']
+		else if(Utils.oneOfCombinations(words, ['team', 'driver'], ['driver'])) apiData = ['teamDrivers']
+		else {
+			let _apiData = []
+			if(_.indexOf(words, 'current')>-1) _apiData.push('teamSeasonStanding')
+			if(_.indexOf(words, 'title')>-1) _apiData.push('teamWorldTitles')
+			if(_.indexOf(words, 'season')>-1) _apiData.push('teamSeasonFinishes')
+			if(_.indexOf(words, 'driver')>-1) _apiData.push('teamDrivers')
+			apiData = _apiData.length ? _apiData : apiData
+		}
+		return apiData
+	}
+
+	static inspectTrackData(words) {
+		let apiData = ['trackWinners']
+		if(Utils.oneOfCombinations(words, ['current', 'standing'])) apiData = ['currentTrackResults']
+		return apiData
 	}
 
 	static getDataInfo(data, selection, cb) {
@@ -123,6 +194,30 @@ class Analyser {
 				name: `${d.name}'s Constructors`,
 				type: 'driverTeams',
 				driver: d.ergastID
+			}, {
+				name: `${d.name}'s Current Season Info`,
+				type: 'teamSeasonStanding',
+				team: d.ergastID
+			}, {
+				name: `${d.name}'s World Titles`,
+				type: 'teamWorldTitles',
+				team: d.ergastID
+			}, {
+				name: `${d.name}'s Season Finishes`,
+				type: 'teamSeasonFinishes',
+				team: d.ergastID
+			}, {
+				name: `${d.name}'s Drivers`,
+				type: 'teamDrivers',
+				team: d.ergastID
+			}, {
+				name: `${d.name} Winners`,
+				type: 'trackWinners',
+				track: d.ergastID
+			}, {
+				name: `${moment().format('YYYY')} ${d.name} Results`,
+				type: 'currentTrackResults',
+				track: d.ergastID
 			}], _d => _.indexOf(selection, _d.type)>-1))
 			cb1()
 		}, err => cb(_.flatten(summaries)))

@@ -10,7 +10,7 @@ class F1Service {
 		} else if(entity.type == 'team') {
 			type = 'constructors'
 		}
-		$.get(`http://ergast.com/api/f1/${type}/${entity.ergastID}.json`)
+		$.get(`http://ergast.com/api/f1/${type}/${entity.ergastID}.json?limit=1000`)
 		.end((err, res) => {
 			if(err) return cb(err)
 			if(entity.type=='driver') {
@@ -51,6 +51,83 @@ class F1Service {
 		})
 	}
 
+	static getDriverSeasonResults(year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/driverStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
+	}
+
+	static getTeamSeasonResults(year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructorStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists', 'ConstructorStandings'], cb)
+	}
+
+	static getRaceCalendar(year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverResultsBySeason(driver, year, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverWorldTitles(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings/1/seasons.json?limit=1000`, ['SeasonTable', 'Seasons'], cb)
+	}
+
+	static getDriverSeasonFinishes(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists'], cb)
+	}
+
+	static getDriverTeams(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/constructors.json?limit=1000`, ['ConstructorTable', 'Constructors'], cb)
+	}
+
+	static getDriverSeasonStanding(driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/current/drivers/${driver}/driverStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
+	}
+
+	static getNextRace(cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/current/next.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getTeamSeasonStanding(team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/current/constructors/${team}/constructorStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists', 'ConstructorStandings'], cb)
+	}
+
+	static getTeamWorldTitles(team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/constructors/${team}/constructorStandings/1/seasons.json?limit=1000`, ['SeasonTable', 'Seasons'], cb)
+	}
+
+	static getTeamSeasonFinishes(team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/constructors/${team}/constructorStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists'], cb)
+	}
+
+	static getTeamDrivers(team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/constructors/${team}/drivers.json?limit=1000`, ['DriverTable', 'Drivers'], cb)
+	}
+
+	static getTrackWinners(track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/circuits/${track}/results/1.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getCurrentTrackResults(track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/current/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races', 'Results'], cb)
+	}
+
+	static callApi(link, keys, cb) {
+		$.get(link)
+		.end((err, res) => {
+			if(err) return cb(true)
+			let data = res.body.MRData
+			async.forEachSeries(keys, (k, cb1) => {
+				if(!data[k]) return cb1(true)
+				data = data[k]
+				if(_.isArray(data)) {
+					if(!data.length) return cb1(true)
+					if(_.last(keys)!=k) data = _.first(data)
+				}
+				cb1()
+			}, err => cb(err, data))
+		})
+	}
+
 	static getSummary(summary, cb) {
 		switch(summary.type) {
 			case 'raceCalendar':
@@ -77,63 +154,28 @@ class F1Service {
 			case 'nextRace':
 				F1Service.getNextRace(cb)
 				break
+			case 'teamSeasonStanding':
+				F1Service.getTeamSeasonStanding(summary.team, cb)
+				break
+			case 'teamWorldTitles':
+				F1Service.getTeamWorldTitles(summary.team, cb)
+				break
+			case 'teamSeasonFinishes':
+				F1Service.getTeamSeasonFinishes(summary.team, cb)
+				break
+			case 'teamDrivers':
+				F1Service.getTeamDrivers(summary.team, cb)
+				break
+			case 'trackWinners':
+				F1Service.getTrackWinners(summary.track, cb)
+				break
+			case 'currentTrackResults':
+				F1Service.getCurrentTrackResults(summary.track, cb)
+				break
 			default:
 				cb(true)
 				break
 		}
-	}
-
-	static getDriverSeasonResults(year, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/${year}/driverStandings.json`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
-	}
-
-	static getTeamSeasonResults(year, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructorStandings.json`, ['StandingsTable', 'StandingsLists', 'ConstructorStandings'], cb)
-	}
-
-	static getRaceCalendar(year, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/${year}.json`, ['RaceTable', 'Races'], cb)
-	}
-
-	static getDriverResultsBySeason(driver, year, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/results.json`, ['RaceTable', 'Races'], cb)
-	}
-
-	static getDriverWorldTitles(driver, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings/1/seasons.json`, ['SeasonTable', 'Seasons'], cb)
-	}
-
-	static getDriverSeasonFinishes(driver, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/driverStandings.json`, ['StandingsTable', 'StandingsLists'], cb)
-	}
-
-	static getDriverTeams(driver, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/drivers/${driver}/constructors.json`, ['ConstructorTable', 'Constructors'], cb)
-	}
-
-	static getDriverSeasonStanding(driver, cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/current/drivers/${driver}/driverStandings.json`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
-	}
-
-	static getNextRace(cb) {
-		F1Service.callApi(`http://ergast.com/api/f1/current/next.json`, ['RaceTable', 'Races'], cb)
-	}
-
-	static callApi(link, keys, cb) {
-		$.get(link)
-		.end((err, res) => {
-			if(err) return cb(true)
-			let data = res.body.MRData
-			async.forEachSeries(keys, (k, cb1) => {
-				if(!data[k]) return cb1(true)
-				data = data[k]
-				if(_.isArray(data)) {
-					if(!data.length) return cb1(true)
-					if(_.last(keys)!=k) data = _.first(data)
-				}
-				cb1()
-			}, err => cb(err, data))
-		})
 	}
 
 	static resultsFormater(type) {
@@ -259,6 +301,93 @@ class F1Service {
 				}, {
 					name: 'Country',
 					key: ['Circuit', 'Location', 'country']
+				}]
+				break
+			case 'teamSeasonStanding':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'Points',
+					key: ['points']
+				}, {
+					name: 'Wins',
+					key: ['wins']
+				}]
+				break
+			case 'teamWorldTitles':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'teamSeasonFinishes':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'Position',
+					key: ['ConstructorStandings', 'position']
+				}, {
+					name: 'Points',
+					key: ['ConstructorStandings', 'points']
+				}, {
+					name: 'Wins',
+					key: ['ConstructorStandings', 'wins']
+				}]
+				break
+			case 'teamDrivers':
+				return [{
+					name: 'First Name',
+					key: ['givenName']
+				}, {
+					name: 'Last Name',
+					key: ['familyName']
+				}, {
+					name: 'Birth Date',
+					key: ['dateOfBirth']
+				}, {
+					name: 'Nationality',
+					key: ['nationality']
+				}]
+				break
+			case 'trackWinners':
+				return [{
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'First name',
+					key: ['Results', 'Driver', 'givenName']
+				}, {
+					name: 'Last name',
+					key: ['Results', 'Driver', 'familyName']
+				}, {
+					name: 'Nationality',
+					key: ['Results', 'Driver', 'nationality']
+				}, {
+					name: 'Team',
+					key: ['Results', 'Constructor', 'name']
+				}]
+				break
+			case 'currentTrackResults':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'First name',
+					key: ['Driver', 'givenName']
+				}, {
+					name: 'Last name',
+					key: ['Driver', 'familyName']
+				}, {
+					name: 'Nationality',
+					key: ['Driver', 'nationality']
+				}, {
+					name: 'Team',
+					key: ['Constructor', 'name']
 				}]
 				break
 			default:

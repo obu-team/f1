@@ -124,7 +124,7 @@ class AnalyseService {
 		Entity.find({
 			type: 'driver',
 			$or: [
-				{name: driver.text},
+				{name: new RegExp('^'+driver.text.toLowerCase()+'$', "i")},
 				{keywords: driver.text},
 				{keywords: driver.driver.toLowerCase()}
 			]
@@ -213,7 +213,7 @@ class AnalyseService {
 		Entity.find({
 			type: 'team',
 			$or: [
-				{name: team.text},
+				{name: new RegExp('^'+team.text.toLowerCase()+'$', "i")},
 				{keywords: team.text},
 				{keywords: team.team.toLowerCase()}
 			]
@@ -305,8 +305,8 @@ class AnalyseService {
 		Entity.find({
 			type: 'track',
 			$or: [
-				{name: track.text},
-				{name: track.country.toLowerCase()},
+				{name: new RegExp('^'+track.text.toLowerCase()+'$', "i")},
+				{name: new RegExp('^'+track.country.toLowerCase()+'$', "i")},
 				{keywords: track.text},
 				{keywords: track.country.toLowerCase()}
 			]
