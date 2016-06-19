@@ -127,6 +127,31 @@ class F1Service {
 		F1Service.callApi(`http://ergast.com/api/f1/constructors/${team}/drivers/${driver}/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
 	}
 
+	static getDriverSeasonStandingByYear(year, driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/driverStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists', 'DriverStandings'], cb)
+	}
+
+	static getDriverWorldTitlesByYear(year, driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/driverStandings/1/seasons.json?limit=1000`, ['SeasonTable', 'Seasons'], cb)
+	}
+
+	static getDriverSeasonFinishesByYear(year, driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverTeamsByYear(year, driver, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/constructors.json?limit=1000`, ['ConstructorTable', 'Constructors'], cb)
+	}
+
+	static getDriversByNationality(track, cb) {
+		$.post(`/ai/entity/list`)
+		.send({name: track})
+		.end((err, res) => {
+			if(err || !res.body.results.bindings.length) return cb(true)
+			cb(null, res.body.results.bindings)
+		})
+	}
+
 	static callApi(link, keys, cb) {
 		$.get(link)
 		.end((err, res) => {
@@ -199,6 +224,21 @@ class F1Service {
 				break
 			case 'driverRaceResultsByTeamAndTrack':
 				F1Service.getDriverRaceResultsByTeamAndTrack(summary.driver, summary.team, summary.track, cb)
+				break
+			case 'driversByNationality':
+				F1Service.getDriversByNationality(summary.track, cb)
+				break
+			case 'driverSeasonStandingByYear':
+				F1Service.getDriverSeasonStandingByYear(summary.year, summary.driver, cb)
+				break
+			case 'driverWorldTitlesByYear':
+				F1Service.getDriverWorldTitlesByYear(summary.year, summary.driver, cb)
+				break
+			case 'driverSeasonFinishesByYear':
+				F1Service.getDriverSeasonFinishesByYear(summary.year, summary.driver, cb)
+				break
+			case 'driverTeamsByYear':
+				F1Service.getDriverTeamsByYear(summary.year, summary.driver, cb)
 				break
 			default:
 				cb(true)
@@ -472,6 +512,60 @@ class F1Service {
 					key: ['Results', 'position']
 				}, {
 					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'driversByNationality':
+				return []
+				break
+			case 'driverSeasonStandingByYear':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'Points',
+					key: ['points']
+				}, {
+					name: 'Wins',
+					key: ['wins']
+				}, {
+					name: 'Team',
+					key: ['Constructors', 'name']
+				}]
+				break
+			case 'driverWorldTitlesByYear':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'driverSeasonFinishesByYear':
+				return [{
+					name: 'Position',
+					key: ['Results', 'position']
+				}, {
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'Team',
+					key: ['Results', 'Constructor', 'name']
+				}]
+				break
+			case 'driverTeamsByYear':
+				return [{
+					name: 'Team',
+					key: ['name']
+				}, {
+					name: 'Nationality',
+					key: ['nationality']
+				}, {
+					name: 'More Info',
 					key: ['url']
 				}]
 				break

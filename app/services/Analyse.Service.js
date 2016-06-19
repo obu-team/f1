@@ -6,6 +6,7 @@ const Consts = require('../lib/Consts')
 const AIService = require('./AI.Service')
 const F1Service = require('./F1.Service')
 const Database = require('../lib/Database')
+const Utils = require('../lib/Utils')
 
 const Entity = Database.model('Entity')
 
@@ -84,11 +85,12 @@ class AnalyseService {
 
 	static getRawEntities(text, cb) {
 		let keys = text.split(' ')
+		let naturalKeys = Utils.naturalKeywordCombinations(keys)
 		Entity.find({
 			$or: [
 				{name: new RegExp('^'+text+'$', "i")},
-				{name: {$in: keys}},
-				{keywords: {$elemMatch: {$in: keys}}}
+				{name: {$in: naturalKeys}},
+				{keywords: {$elemMatch: {$in: naturalKeys}}}
 			]
 		}, (err, es) => {
 			if(err) return cb(err)

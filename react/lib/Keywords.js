@@ -25,4 +25,7 @@ export const specialKeywords = [{
 }, {
 	key: 'title',
 	words: ['title', 'titles', 'world title', 'world championship', 'world championships', 'champion of the world', 'championship', 'championships']
+}, {
+	key: 'nation',
+	words: ['nation', 'nationality', 'country', 'countries']
 }]
