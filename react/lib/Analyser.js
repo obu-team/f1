@@ -447,6 +447,21 @@ class Analyser {
 				type: 'driverTeamsByYear',
 				year: d.date,
 				driver: d.driver ? d.driver.ergastID : null
+			}, {
+				name: `${d.date} ${d.team ? d.team.name : ''}'s Season Info`,
+				type: 'teamSeasonStandingByYear',
+				year: d.date,
+				team: d.team ? d.team.ergastID : null
+			}, {
+				name: `${d.date} ${d.team ? d.team.name : ''}'s World Titles`,
+				type: 'teamWorldTitlesByYear',
+				year: d.date,
+				team: d.team ? d.team.ergastID : null
+			}, {
+				name: `${d.date} ${d.team ? d.team.name : ''}'s Drivers`,
+				type: 'teamDriversByYear',
+				year: d.date,
+				team: d.team ? d.team.ergastID : null
 			}], _d => _.indexOf(selection, _d.type)>-1))
 			cb1()
 		}, err => cb(_.flatten(summaries), entities))

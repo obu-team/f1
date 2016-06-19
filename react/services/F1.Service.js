@@ -143,6 +143,18 @@ class F1Service {
 		F1Service.callApi(`http://ergast.com/api/f1/${year}/drivers/${driver}/constructors.json?limit=1000`, ['ConstructorTable', 'Constructors'], cb)
 	}
 
+	static getTeamSeasonStandingByYear(year, team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/constructorStandings.json?limit=1000`, ['StandingsTable', 'StandingsLists', 'ConstructorStandings'], cb)
+	}
+
+	static getTeamWorldTitlesByYear(year, team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/constructorStandings/1/seasons.json?limit=1000`, ['SeasonTable', 'Seasons'], cb)
+	}
+
+	static getTeamDriversByYear(year, team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers.json?limit=1000`, ['DriverTable', 'Drivers'], cb)
+	}
+
 	static getDriversByNationality(track, cb) {
 		$.post(`/ai/entity/list`)
 		.send({name: track})
@@ -239,6 +251,15 @@ class F1Service {
 				break
 			case 'driverTeamsByYear':
 				F1Service.getDriverTeamsByYear(summary.year, summary.driver, cb)
+				break
+			case 'teamSeasonStandingByYear':
+				F1Service.getTeamSeasonStandingByYear(summary.year, summary.team, cb)
+				break
+			case 'teamWorldTitlesByYear':
+				F1Service.getTeamWorldTitlesByYear(summary.year, summary.team, cb)
+				break
+			case 'teamDriversByYear':
+				F1Service.getTeamDriversByYear(summary.year, summary.team, cb)
 				break
 			default:
 				cb(true)
@@ -567,6 +588,42 @@ class F1Service {
 				}, {
 					name: 'More Info',
 					key: ['url']
+				}]
+				break
+			case 'teamSeasonStandingByYear':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'Points',
+					key: ['points']
+				}, {
+					name: 'Wins',
+					key: ['wins']
+				}]
+				break
+			case 'teamWorldTitlesByYear':
+				return [{
+					name: 'Season',
+					key: ['season']
+				}, {
+					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'teamDriversByYear':
+				return [{
+					name: 'First Name',
+					key: ['givenName']
+				}, {
+					name: 'Last Name',
+					key: ['familyName']
+				}, {
+					name: 'Birth Date',
+					key: ['dateOfBirth']
+				}, {
+					name: 'Nationality',
+					key: ['nationality']
 				}]
 				break
 			default:
