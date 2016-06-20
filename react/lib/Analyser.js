@@ -215,7 +215,8 @@ class Analyser {
 				let apiData = Analyser.inspectTrackData(words)
 				let _ents = true
 				if(apiData.length==1 && _.first(apiData)=='driversByNationality') {
-					grouped.track = [_.first(grouped.track)]
+					let nations = Utils.getNationalities(combinations)
+					grouped.track = nations
 					_ents = false
 				}
 				return Analyser.getDataInfo(grouped.track, apiData, cb, _ents)
@@ -333,6 +334,11 @@ class Analyser {
 					if(_.indexOf(words, 'calendar')>-1) apiData.push('raceCalendar')
 					apiData = _.flatten(apiData)
 					if(apiData.length) return Analyser.getDataInfo(['current'], apiData, cb)
+				} else {
+					let nations = Utils.getNationalities(combinations)
+					if(nations.length) {
+						return Analyser.getDataInfo(nations, ['driversByNationality'], cb, false)
+					}
 				}
 			}
 		}
@@ -435,9 +441,9 @@ class Analyser {
 				type: 'trackWinners',
 				track: d.ergastID
 			}, {
-				name: `Drivers`,
+				name: `${Utils.capitalLetter(d.nation)} Drivers`,
 				type: 'driversByNationality',
-				track: d.ergastID
+				nation: d.nation
 			}, {
 				name: `${moment().format('YYYY')} ${d.name} Results`,
 				type: 'currentTrackResults',

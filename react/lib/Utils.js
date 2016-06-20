@@ -3,11 +3,17 @@ import _ from 'lodash'
 import moment from 'moment'
 import Masonry from 'masonry-layout'
 
+import nationalities from './Nationalities'
+
 let query = ''
 
 class Utils {
 	static capitalize(str) {
 		return _(str.split(/(?=[A-Z])/)).map(txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()).value().join(' ')
+	}
+
+	static capitalLetter(txt) {
+		return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
 	}
 
 	static formatEntityString(e) {
@@ -103,6 +109,12 @@ class Utils {
 
 	static getQuery() {
 		return query
+	}
+
+	static getNationalities(words) {
+		let ret = _.intersection(words, nationalities)
+		ret = ret.length ? ret.map(nation => ({nation})) : []
+		return ret
 	}
 }
 

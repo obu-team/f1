@@ -187,9 +187,9 @@ class F1Service {
 		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers/${driver}/circuits/${track}/qualifying.json?limit=1000`, ['RaceTable', 'Races'], cb)
 	}
 
-	static getDriversByNationality(track, cb) {
+	static getDriversByNationality(nation, cb) {
 		$.post(`/ai/entity/list`)
-		.send({name: track})
+		.send({name: nation})
 		.end((err, res) => {
 			if(err || !res.body.results.bindings.length) return cb(true)
 			cb(null, res.body.results.bindings)
@@ -270,7 +270,7 @@ class F1Service {
 				F1Service.getDriverRaceResultsByTeamAndTrack(summary.driver, summary.team, summary.track, cb)
 				break
 			case 'driversByNationality':
-				F1Service.getDriversByNationality(summary.track, cb)
+				F1Service.getDriversByNationality(summary.nation, cb)
 				break
 			case 'driverSeasonStandingByYear':
 				F1Service.getDriverSeasonStandingByYear(summary.year, summary.driver, cb)
@@ -593,7 +593,16 @@ class F1Service {
 				}]
 				break
 			case 'driversByNationality':
-				return []
+				return [{
+					name: 'First Name',
+					key: ['firstName', 'value']
+				}, {
+					name: 'Last Name',
+					key: ['lastName', 'value']
+				}, {
+					name: 'More info',
+					key: ['driver', 'value']
+				}]
 				break
 			case 'driverSeasonStandingByYear':
 				return [{
