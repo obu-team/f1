@@ -441,7 +441,7 @@ class Analyser {
 				type: 'trackWinners',
 				track: d.ergastID
 			}, {
-				name: `${Utils.capitalLetter(d.nation)} Drivers`,
+				name: `${d.nation ? Utils.capitalLetter(d.nation) : ''} Drivers`,
 				type: 'driversByNationality',
 				nation: d.nation
 			}, {
