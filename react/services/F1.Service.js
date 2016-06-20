@@ -155,6 +155,14 @@ class F1Service {
 		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers.json?limit=1000`, ['DriverTable', 'Drivers'], cb)
 	}
 
+	static getTrackWinnersByYear(year, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/results/1.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getTrackResultsByYear(year, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races', 'Results'], cb)
+	}
+
 	static getDriversByNationality(track, cb) {
 		$.post(`/ai/entity/list`)
 		.send({name: track})
@@ -260,6 +268,12 @@ class F1Service {
 				break
 			case 'teamDriversByYear':
 				F1Service.getTeamDriversByYear(summary.year, summary.team, cb)
+				break
+			case 'trackWinnersByYear':
+				F1Service.getTrackWinnersByYear(summary.year, summary.track, cb)
+				break
+			case 'trackResultsByYear':
+				F1Service.getTrackResultsByYear(summary.year, summary.track, cb)
 				break
 			default:
 				cb(true)
@@ -624,6 +638,42 @@ class F1Service {
 				}, {
 					name: 'Nationality',
 					key: ['nationality']
+				}]
+				break
+			case 'trackWinnersByYear':
+				return [{
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'First name',
+					key: ['Results', 'Driver', 'givenName']
+				}, {
+					name: 'Last name',
+					key: ['Results', 'Driver', 'familyName']
+				}, {
+					name: 'Nationality',
+					key: ['Results', 'Driver', 'nationality']
+				}, {
+					name: 'Team',
+					key: ['Results', 'Constructor', 'name']
+				}]
+				break
+			case 'trackResultsByYear':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'First name',
+					key: ['Driver', 'givenName']
+				}, {
+					name: 'Last name',
+					key: ['Driver', 'familyName']
+				}, {
+					name: 'Nationality',
+					key: ['Driver', 'nationality']
+				}, {
+					name: 'Team',
+					key: ['Constructor', 'name']
 				}]
 				break
 			default:

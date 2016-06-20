@@ -74,7 +74,13 @@ class Analyser {
 					_.forEach(dates, d => {_.forEach(grouped.team, tm => combos.push({date: d, team: tm}))})
 					return Analyser.getDataInfo(combos, apiData, cb)
 				}
-				else if(Utils.onlyInArray(keys, ['track'])) return Analyser.getDataInfo(grouped.track, Analyser.inspectTrackData(words), cb)
+				else if(Utils.onlyInArray(keys, ['track'])) {
+					let apiData = Analyser.inspectTrackData(words)
+					apiData = apiData.map(a => `${a}ByYear`)
+					let combos = []
+					_.forEach(dates, d => {_.forEach(grouped.track, tm => combos.push({date: d, track: tm}))})
+					return Analyser.getDataInfo(combos, apiData, cb)
+				}
 				else if(Utils.onlyInArray(keys, ['driver', 'team'])) {
 					let driverData = Analyser.inspectDriverData(words, true)
 					let teamData = Analyser.inspectTeamData(words, true)
@@ -338,8 +344,8 @@ class Analyser {
 	}
 
 	static inspectTrackData(words, empty = false) {
-		let apiData = empty ? [] : ['trackWinners']
-		if(Utils.oneOfCombinations(words, ['current', 'standing'])) apiData = ['currentTrackResults']
+		let apiData = empty ? [] : ['trackWinners', 'trackResults']
+		if(!empty && Utils.oneOfCombinations(words, ['current', 'standing'])) apiData = ['currentTrackResults']
 		else if(!empty && Utils.oneOfCombinations(words, ['driver', 'nation'], ['driver'])) apiData = ['driversByNationality']
 		return apiData
 	}
@@ -462,6 +468,16 @@ class Analyser {
 				type: 'teamDriversByYear',
 				year: d.date,
 				team: d.team ? d.team.ergastID : null
+			}, {
+				name: `${d.date} ${d.track ? d.track.name : ''} Winners`,
+				type: 'trackWinnersByYear',
+				year: d.date,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.track ? d.track.name : ''} Results`,
+				type: 'trackResultsByYear',
+				year: d.date,
+				track: d.track ? d.track.ergastID : null
 			}], _d => _.indexOf(selection, _d.type)>-1))
 			cb1()
 		}, err => cb(_.flatten(summaries), entities))
