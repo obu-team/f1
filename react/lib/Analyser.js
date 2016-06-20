@@ -204,7 +204,7 @@ class Analyser {
 				let apiData = ['raceCalendar', 'driverStandings', 'constructorStandings']
 				if(Utils.oneOfCombinations(words, ['season', 'standing'])) apiData = ['driverStandings', 'constructorStandings']
 				else if(Utils.oneOfCombinations(words, ['calendar', 'season'])) apiData = ['raceCalendar']
-				else if(Utils.oneOfCombinations(words, ['driver', 'standing', 'season'])) apiData = ['driverStandings']
+				else if(Utils.oneOfCombinations(words, ['driver', 'standing', 'season', 'title'])) apiData = ['driverStandings']
 				else if(Utils.oneOfCombinations(words, ['team', 'standing', 'season'])) apiData = ['constructorStandings']
 				return Analyser.getDataInfo(dates, apiData, cb)
 			}
