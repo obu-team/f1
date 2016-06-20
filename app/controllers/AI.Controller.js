@@ -41,8 +41,12 @@ class AIController {
 	static getDriversList(req, res) {
 		let entity = req.body.name
 		F1Service.getCircuitCountry(entity, (err, d) => {
-			if(err) return res.sendStatus(500)
+			if(err) {
+				console.log(err)
+				return res.sendStatus(500)
+			}
 			SparqlService.getDriversFromCountryOrTeam({name: d}, (err, data) => {
+				console.log('call getDriversFromCountryOrTeam')
 				if(err) return res.sendStatus(500)
 				res.json(data)
 			})

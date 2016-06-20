@@ -331,6 +331,7 @@ class SparqlService {
 	}
 
 	static getDriversFromCountryOrTeam(entity, cb) {
+		console.log('getDriversFromCountryOrTeam:' + entity.name)
 		let myquery = new sparqls.Query()
 
 		let concept = {
