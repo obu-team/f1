@@ -74,23 +74,35 @@ class Analyser {
 					_.forEach(dates, d => {_.forEach(grouped.team, tm => combos.push({date: d, team: tm}))})
 					return Analyser.getDataInfo(combos, apiData, cb)
 				}
-				else if(Utils.onlyInArray(keys, ['track'])) return Analyser.getDataInfo(grouped.track, Analyser.inspectTrackData(words), cb)
+				else if(Utils.onlyInArray(keys, ['track'])) {
+					let apiData = Analyser.inspectTrackData(words)
+					apiData = apiData.map(a => `${a}ByYear`)
+					let combos = []
+					_.forEach(dates, d => {_.forEach(grouped.track, tm => combos.push({date: d, track: tm}))})
+					return Analyser.getDataInfo(combos, apiData, cb)
+				}
 				else if(Utils.onlyInArray(keys, ['driver', 'team'])) {
 					let driverData = Analyser.inspectDriverData(words, true)
 					let teamData = Analyser.inspectTeamData(words, true)
+					let driverCombos = []
+					let teamCombos = []
 					let combos = []
-					_.forEach(grouped.driver, d => {_.forEach(grouped.team, t => combos.push({driver: d, team: t}))})
+					driverData = driverData.map(a => `${a}ByYear`)
+					teamData = teamData.map(a => `${a}ByYear`)
+					_.forEach(dates, d => {_.forEach(grouped.driver, dr => driverCombos.push({date: d, driver: dr}))})
+					_.forEach(dates, d => {_.forEach(grouped.team, tm => teamCombos.push({date: d, team: tm}))})
+					_.forEach(dates, d => _.forEach(grouped.driver, dr => {_.forEach(grouped.team, tm => combos.push({date: d, driver: dr, team: tm}))}))
 					let summaries = []
 					return async.parallel([
-						cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTeam'], sum => {
+						cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTeamAndYear'], sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
+						cb1 => Analyser.getDataInfo(driverCombos, driverData, sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
+						cb1 => Analyser.getDataInfo(teamCombos, teamData, sum => {
 							summaries.push(sum)
 							cb1()
 						})
@@ -101,19 +113,25 @@ class Analyser {
 				else if(Utils.onlyInArray(keys, ['driver', 'track'])) {
 					let driverData = Analyser.inspectDriverData(words, true)
 					let trackData = Analyser.inspectTrackData(words, true)
+					let driverCombos = []
+					let trackCombos = []
 					let combos = []
-					_.forEach(grouped.driver, d => {_.forEach(grouped.track, t => combos.push({driver: d, track: t}))})
+					driverData = driverData.map(a => `${a}ByYear`)
+					trackData = trackData.map(a => `${a}ByYear`)
+					_.forEach(dates, d => {_.forEach(grouped.driver, dr => driverCombos.push({date: d, driver: dr}))})
+					_.forEach(dates, d => {_.forEach(grouped.track, tr => trackCombos.push({date: d, track: tr}))})
+					_.forEach(dates, d => _.forEach(grouped.driver, dr => {_.forEach(grouped.track, tr => combos.push({date: d, driver: dr, track: tr}))}))
 					let summaries = []
 					return async.parallel([
-						cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTrack'], sum => {
+						cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTrackAndYear', 'driverQualiResultsByTrackAndYear'], sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
+						cb1 => Analyser.getDataInfo(driverCombos, driverData, sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.track, trackData, sum => {
+						cb1 => Analyser.getDataInfo(trackCombos, trackData, sum => {
 							summaries.push(sum)
 							cb1()
 						})
@@ -124,19 +142,23 @@ class Analyser {
 				else if(Utils.onlyInArray(keys, ['team', 'track'])) {
 					let teamData = Analyser.inspectTeamData(words, true)
 					let trackData = Analyser.inspectTrackData(words, true)
+					let teamCombos = []
+					let trackCombos = []
 					let combos = []
-					_.forEach(grouped.team, d => {_.forEach(grouped.track, t => combos.push({team: d, track: t}))})
+					_.forEach(dates, d => {_.forEach(grouped.team, tm => teamCombos.push({date: d, team: tm}))})
+					_.forEach(dates, d => {_.forEach(grouped.track, tr => trackCombos.push({date: d, track: tr}))})
+					_.forEach(dates, d => _.forEach(grouped.team, tm => {_.forEach(grouped.track, tr => combos.push({date: d, team: tm, track: tr}))}))
 					let summaries = []
 					return async.parallel([
-						cb1 => Analyser.getDataInfo(combos, ['teamAttendanceByTrack'], sum => {
+						cb1 => Analyser.getDataInfo(combos, ['teamAttendanceByTrackAndYear'], sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
+						cb1 => Analyser.getDataInfo(teamCombos, teamData, sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.track, trackData, sum => {
+						cb1 => Analyser.getDataInfo(trackCombos, trackData, sum => {
 							summaries.push(sum)
 							cb1()
 						})
@@ -148,19 +170,29 @@ class Analyser {
 					let driverData = Analyser.inspectDriverData(words, true)
 					let teamData = Analyser.inspectTeamData(words, true)
 					let trackData = Analyser.inspectTrackData(words, true)
+					let driverCombos = []
+					let teamCombos = []
+					let trackCombos = []
 					let combos = []
-					_.forEach(grouped.driver, d => {_.forEach(grouped.team, t => {_.forEach(grouped.track, tr => combos.push({driver: d, team: t, track: tr}))})})
+					_.forEach(dates, d => {_.forEach(grouped.driver, dr => driverCombos.push({date: d, team: dr}))})
+					_.forEach(dates, d => {_.forEach(grouped.team, tm => teamCombos.push({date: d, team: tm}))})
+					_.forEach(dates, d => {_.forEach(grouped.track, tr => trackCombos.push({date: d, track: tr}))})
+					_.forEach(dates, d => _.forEach(grouped.driver, dr => {_.forEach(grouped.team, t => {_.forEach(grouped.track, tr => combos.push({date: d, driver: dr, team: t, track: tr}))})}))
 					let summaries = []
 					return async.parallel([
-						cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTeamAndTrack'], sum => {
+						cb1 => Analyser.getDataInfo(combos, ['driverRaceResultsByTeamAndTrackAndYear', 'driverQualiResultsByTeamAndTrackAndYear'], sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.driver, driverData, sum => {
+						cb1 => Analyser.getDataInfo(driverCombos, driverData, sum => {
 							summaries.push(sum)
 							cb1()
 						}),
-						cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
+						cb1 => Analyser.getDataInfo(teamCombos, teamData, sum => {
+							summaries.push(sum)
+							cb1()
+						}),
+						cb1 => Analyser.getDataInfo(trackCombos, trackData, sum => {
 							summaries.push(sum)
 							cb1()
 						})
@@ -172,7 +204,7 @@ class Analyser {
 				let apiData = ['raceCalendar', 'driverStandings', 'constructorStandings']
 				if(Utils.oneOfCombinations(words, ['season', 'standing'])) apiData = ['driverStandings', 'constructorStandings']
 				else if(Utils.oneOfCombinations(words, ['calendar', 'season'])) apiData = ['raceCalendar']
-				else if(Utils.oneOfCombinations(words, ['driver', 'standing', 'season'])) apiData = ['driverStandings']
+				else if(Utils.oneOfCombinations(words, ['driver', 'standing', 'season', 'title'])) apiData = ['driverStandings']
 				else if(Utils.oneOfCombinations(words, ['team', 'standing', 'season'])) apiData = ['constructorStandings']
 				return Analyser.getDataInfo(dates, apiData, cb)
 			}
@@ -183,7 +215,8 @@ class Analyser {
 				let apiData = Analyser.inspectTrackData(words)
 				let _ents = true
 				if(apiData.length==1 && _.first(apiData)=='driversByNationality') {
-					grouped.track = [_.first(grouped.track)]
+					let nations = Utils.getNationalities(combinations)
+					grouped.track = nations
 					_ents = false
 				}
 				return Analyser.getDataInfo(grouped.track, apiData, cb, _ents)
@@ -276,6 +309,10 @@ class Analyser {
 					cb1 => Analyser.getDataInfo(grouped.team, teamData, sum => {
 						summaries.push(sum)
 						cb1()
+					}),
+					cb1 => Analyser.getDataInfo(grouped.track, trackData, sum => {
+						summaries.push(sum)
+						cb1()
 					})
 				], () => {
 					cb(_.flatten(summaries))
@@ -297,6 +334,11 @@ class Analyser {
 					if(_.indexOf(words, 'calendar')>-1) apiData.push('raceCalendar')
 					apiData = _.flatten(apiData)
 					if(apiData.length) return Analyser.getDataInfo(['current'], apiData, cb)
+				} else {
+					let nations = Utils.getNationalities(combinations)
+					if(nations.length) {
+						return Analyser.getDataInfo(nations, ['driversByNationality'], cb, false)
+					}
 				}
 			}
 		}
@@ -338,8 +380,8 @@ class Analyser {
 	}
 
 	static inspectTrackData(words, empty = false) {
-		let apiData = empty ? [] : ['trackWinners']
-		if(Utils.oneOfCombinations(words, ['current', 'standing'])) apiData = ['currentTrackResults']
+		let apiData = empty ? [] : ['trackWinners', 'trackResults']
+		if(!empty && Utils.oneOfCombinations(words, ['current', 'standing'])) apiData = ['currentTrackResults']
 		else if(!empty && Utils.oneOfCombinations(words, ['driver', 'nation'], ['driver'])) apiData = ['driversByNationality']
 		return apiData
 	}
@@ -399,9 +441,9 @@ class Analyser {
 				type: 'trackWinners',
 				track: d.ergastID
 			}, {
-				name: `Drivers`,
+				name: `${d.nation ? Utils.capitalLetter(d.nation) : ''} Drivers`,
 				type: 'driversByNationality',
-				track: d.ergastID
+				nation: d.nation
 			}, {
 				name: `${moment().format('YYYY')} ${d.name} Results`,
 				type: 'currentTrackResults',
@@ -462,6 +504,54 @@ class Analyser {
 				type: 'teamDriversByYear',
 				year: d.date,
 				team: d.team ? d.team.ergastID : null
+			}, {
+				name: `${d.date} ${d.track ? d.track.name : ''} Winners`,
+				type: 'trackWinnersByYear',
+				year: d.date,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.track ? d.track.name : ''} Results`,
+				type: 'trackResultsByYear',
+				year: d.date,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.driver ? d.driver.name : ''} in ${d.team ? d.team.name : ''} Race Results`,
+				type: 'driverRaceResultsByTeamAndYear',
+				year: d.date,
+				driver: d.driver ? d.driver.ergastID : null,
+				team: d.team ? d.team.ergastID : null
+			}, {
+				name: `${d.date} ${d.driver ? d.driver.name : ''} in ${d.track ? d.track.name : ''} Race Results`,
+				type: 'driverRaceResultsByTrackAndYear',
+				year: d.date,
+				driver: d.driver ? d.driver.ergastID : null,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.driver ? d.driver.name : ''} in ${d.track ? d.track.name : ''} Qualifying Results`,
+				type: 'driverQualiResultsByTrackAndYear',
+				year: d.date,
+				driver: d.driver ? d.driver.ergastID : null,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.team ? d.team.name : ''} in ${d.track ? d.track.name : ''} Attendance`,
+				type: 'teamAttendanceByTrackAndYear',
+				year: d.date,
+				team: d.team ? d.team.ergastID : null,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.driver ? d.driver.name : ''} in ${d.team ? d.team.name : ''} ${d.track ? d.track.name : ''} Race Results`,
+				type: 'driverRaceResultsByTeamAndTrackAndYear',
+				year: d.date,
+				driver: d.driver ? d.driver.ergastID : null,
+				team: d.team ? d.team.ergastID : null,
+				track: d.track ? d.track.ergastID : null
+			}, {
+				name: `${d.date} ${d.driver ? d.driver.name : ''} in ${d.team ? d.team.name : ''} ${d.track ? d.track.name : ''} Qualifying Results`,
+				type: 'driverQualiResultsByTeamAndTrackAndYear',
+				year: d.date,
+				driver: d.driver ? d.driver.ergastID : null,
+				team: d.team ? d.team.ergastID : null,
+				track: d.track ? d.track.ergastID : null
 			}], _d => _.indexOf(selection, _d.type)>-1))
 			cb1()
 		}, err => cb(_.flatten(summaries), entities))

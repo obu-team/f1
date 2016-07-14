@@ -24,7 +24,7 @@ export const specialKeywords = [{
 	words: ['next race', 'next races', 'next gp', 'next grand prix', 'next venue', 'next venues', 'next circuit', 'next track', 'next tracks', 'next circuits']
 }, {
 	key: 'title',
-	words: ['title', 'titles', 'world title', 'world championship', 'world championships', 'champion of the world', 'championship', 'championships']
+	words: ['title', 'titles', 'world title', 'world championship', 'world championships', 'champion of the world', 'championship', 'championships', 'world champion']
 }, {
 	key: 'nation',
 	words: ['nation', 'nationality', 'country', 'countries']

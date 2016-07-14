@@ -28,7 +28,6 @@ class AIController {
 
 	static getEntity(req, res) {
 		let entity = req.body
-		console.log(entity.name);
 		SparqlService.getEntity(entity, (err, data) => {
 			if(err) return res.sendStatus(500)
 			Entity.update({_id: entity._id}, {data: _.first(data.results.bindings)}, err => {
@@ -39,17 +38,10 @@ class AIController {
 	}
 
 	static getDriversList(req, res) {
-		let entity = req.body.name
-		F1Service.getCircuitCountry(entity, (err, d) => {
-			if(err) {
-				console.log(err)
-				return res.sendStatus(500)
-			}
-			SparqlService.getDriversFromCountryOrTeam({name: d}, (err, data) => {
-				console.log('call getDriversFromCountryOrTeam')
-				if(err) return res.sendStatus(500)
-				res.json(data)
-			})
+		let entity = req.body
+		SparqlService.getDriversFromCountryOrTeam(entity, (err, data) => {
+			if(err) return res.sendStatus(500)
+			res.json(data)
 		})
 	}
 

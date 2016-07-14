@@ -155,9 +155,41 @@ class F1Service {
 		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers.json?limit=1000`, ['DriverTable', 'Drivers'], cb)
 	}
 
-	static getDriversByNationality(track, cb) {
+	static getTrackWinnersByYear(year, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/results/1.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getTrackResultsByYear(year, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races', 'Results'], cb)
+	}
+
+	static getDriverRaceResultsByTeamAndYear(year, driver, team, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers/${driver}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverRaceResultsByTrackAndYear(year, driver, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/drivers/${driver}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverQualiResultsByTrackAndYear(year, driver, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/drivers/${driver}/qualifying.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getTeamAttendanceByTrackAndYear(year, team, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/circuits/${track}/constructors/${team}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverRaceResultsByTeamAndTrackAndYear(year, driver, team, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers/${driver}/circuits/${track}/results.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriverQualiResultsByTeamAndTrackAndYear(year, driver, team, track, cb) {
+		F1Service.callApi(`http://ergast.com/api/f1/${year}/constructors/${team}/drivers/${driver}/circuits/${track}/qualifying.json?limit=1000`, ['RaceTable', 'Races'], cb)
+	}
+
+	static getDriversByNationality(nation, cb) {
 		$.post(`/ai/entity/list`)
-		.send({name: track})
+		.send({name: nation})
 		.end((err, res) => {
 			if(err || !res.body.results.bindings.length) return cb(true)
 			cb(null, res.body.results.bindings)
@@ -238,7 +270,7 @@ class F1Service {
 				F1Service.getDriverRaceResultsByTeamAndTrack(summary.driver, summary.team, summary.track, cb)
 				break
 			case 'driversByNationality':
-				F1Service.getDriversByNationality(summary.track, cb)
+				F1Service.getDriversByNationality(summary.nation, cb)
 				break
 			case 'driverSeasonStandingByYear':
 				F1Service.getDriverSeasonStandingByYear(summary.year, summary.driver, cb)
@@ -260,6 +292,30 @@ class F1Service {
 				break
 			case 'teamDriversByYear':
 				F1Service.getTeamDriversByYear(summary.year, summary.team, cb)
+				break
+			case 'trackWinnersByYear':
+				F1Service.getTrackWinnersByYear(summary.year, summary.track, cb)
+				break
+			case 'trackResultsByYear':
+				F1Service.getTrackResultsByYear(summary.year, summary.track, cb)
+				break
+			case 'driverRaceResultsByTeamAndYear':
+				F1Service.getDriverRaceResultsByTeamAndYear(summary.year, summary.driver, summary.team, cb)
+				break
+			case 'driverRaceResultsByTrackAndYear':
+				F1Service.getDriverRaceResultsByTrackAndYear(summary.year, summary.driver, summary.track, cb)
+				break
+			case 'driverQualiResultsByTrackAndYear':
+				F1Service.getDriverQualiResultsByTrackAndYear(summary.year, summary.driver, summary.track, cb)
+				break
+			case 'teamAttendanceByTrackAndYear':
+				F1Service.getTeamAttendanceByTrackAndYear(summary.year, summary.team, summary.track, cb)
+				break
+			case 'driverRaceResultsByTeamAndTrackAndYear':
+				F1Service.getDriverRaceResultsByTeamAndTrackAndYear(summary.year, summary.driver, summary.team, summary.track, cb)
+				break
+			case 'driverQualiResultsByTeamAndTrackAndYear':
+				F1Service.getDriverQualiResultsByTeamAndTrackAndYear(summary.year, summary.driver, summary.team, summary.track, cb)
 				break
 			default:
 				cb(true)
@@ -537,7 +593,16 @@ class F1Service {
 				}]
 				break
 			case 'driversByNationality':
-				return []
+				return [{
+					name: 'First Name',
+					key: ['firstName', 'value']
+				}, {
+					name: 'Last Name',
+					key: ['lastName', 'value']
+				}, {
+					name: 'More info',
+					key: ['driver', 'value']
+				}]
 				break
 			case 'driverSeasonStandingByYear':
 				return [{
@@ -624,6 +689,114 @@ class F1Service {
 				}, {
 					name: 'Nationality',
 					key: ['nationality']
+				}]
+				break
+			case 'trackWinnersByYear':
+				return [{
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'First name',
+					key: ['Results', 'Driver', 'givenName']
+				}, {
+					name: 'Last name',
+					key: ['Results', 'Driver', 'familyName']
+				}, {
+					name: 'Nationality',
+					key: ['Results', 'Driver', 'nationality']
+				}, {
+					name: 'Team',
+					key: ['Results', 'Constructor', 'name']
+				}]
+				break
+			case 'trackResultsByYear':
+				return [{
+					name: 'Position',
+					key: ['position']
+				}, {
+					name: 'First name',
+					key: ['Driver', 'givenName']
+				}, {
+					name: 'Last name',
+					key: ['Driver', 'familyName']
+				}, {
+					name: 'Nationality',
+					key: ['Driver', 'nationality']
+				}, {
+					name: 'Team',
+					key: ['Constructor', 'name']
+				}]
+				break
+			case 'driverRaceResultsByTeamAndYear':
+				return [{
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['Results', 'position']
+				}, {
+					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'driverRaceResultsByTrackAndYear':
+				return [{
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['Results', 'position']
+				}, {
+					name: 'Team',
+					key: ['Results', 'Constructor', 'name']
+				}]
+				break
+			case 'driverQualiResultsByTrackAndYear':
+				return [{
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['QualifyingResults', 'position']
+				}, {
+					name: 'Team',
+					key: ['QualifyingResults', 'Constructor', 'name']
+				}]
+				break
+			case 'teamAttendanceByTrackAndYear':
+				return [{
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Date',
+					key: ['date']
+				}, {
+					name: 'Round',
+					key: ['round']
+				}]
+				break
+			case 'driverRaceResultsByTeamAndTrackAndYear':
+				return [{
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['Results', 'position']
+				}, {
+					name: 'More info',
+					key: ['url']
+				}]
+				break
+			case 'driverQualiResultsByTeamAndTrackAndYear':
+				return [{
+					name: 'Race',
+					key: ['raceName']
+				}, {
+					name: 'Position',
+					key: ['QualifyingResults', 'position']
+				}, {
+					name: 'More info',
+					key: ['url']
 				}]
 				break
 			default:
