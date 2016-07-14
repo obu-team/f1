@@ -111,7 +111,8 @@ class SparqlService {
 
 				console.log( myquery.sparqlQuery )
 
-				let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql');
+				//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql');
+                let sparqler = new sparqls.Client()
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
 					console.log( data.results )
@@ -209,7 +210,8 @@ class SparqlService {
 
 				console.log( myquery.sparqlQuery )
 
-				let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+				//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+                let sparqler = new sparqls.Client()
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
 					console.log( data.results )
@@ -320,7 +322,8 @@ class SparqlService {
 
 				console.log( myquery.sparqlQuery )
 
-				let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+				//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+                let sparqler = new sparqls.Client()
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
 					console.log( data.results )
@@ -360,7 +363,8 @@ class SparqlService {
 
 		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+		//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+        let sparqler = new sparqls.Client()
 				sparqler.send(myquery, (err, data) => {
 					if(err || !data || !data.results) return cb(true)
 					console.log( data.results )
@@ -388,7 +392,8 @@ class SparqlService {
 
 		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+		//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+        let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
 			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
@@ -464,7 +469,8 @@ class SparqlService {
 
 		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+		//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+        let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
 			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
@@ -502,7 +508,8 @@ class SparqlService {
 
 		console.log( myquery.sparqlQuery )
 
-		let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+		//let sparqler = new sparqls.Client('http://grega.xyz:8891/sparql')
+        let sparqler = new sparqls.Client()
 		sparqler.send(myquery, (err, data) => {
 			if(err || !data || !data.results) return cb(true)
 			console.log( data.results )
