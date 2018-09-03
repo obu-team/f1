@@ -76,7 +76,6 @@
     "gulp-streamify": "*",
     "gulp-uglify": "*",
     "gulp-util": "*",
-    "mockgoose": "*",
     "supertest": "*",
     "vinyl-source-stream": "*"
   }

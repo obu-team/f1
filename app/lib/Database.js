@@ -55,13 +55,13 @@ class Database {
 		mongoose.connect(config.get('db'))
 	}
 
-	mock() {
+	/*mock() {
 		this.listeners()
 		const mockgoose = require('mockgoose')
 		mockgoose(mongoose).then(() => {
 	  	mongoose.connect(config.get('db'))
 		})
-	}
+	}*/
 
 	disconnect() {
 		mongoose.connection.close(this.callbacks.onDisconnect)
