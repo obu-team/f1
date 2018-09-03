@@ -67,22 +67,22 @@ class SparqlService {
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:capacity',
+							'predicate': 'dbp:capacity',
 							'object': '?capacity }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:lengthKm',
+							'predicate': 'dbp:lengthKm',
 							'object': '?lengthKm }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:opened',
+							'predicate': 'dbp:opened',
 							'object': '?opened }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:capacity',
+							'predicate': 'dbp:capacity',
 							'object': '?capacity }'
 						})
 						.registerTriple({
@@ -190,17 +190,17 @@ class SparqlService {
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:carNumber',
+							'predicate': 'dbp:carNumber',
 							'object': '?carNumber }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:nationality',
+							'predicate': 'dbp:nationality',
 							'object': '?nationality }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:firstRace',
+							'predicate': 'dbp:firstRace',
 							'object': '?firstRace }'
 						})
 						.filter(filterLangName)
@@ -268,47 +268,47 @@ class SparqlService {
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:base',
+							'predicate': 'dbp:base',
 							'object': '?base }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:consChamp',
+							'predicate': 'dbp:consChamp',
 							'object': '?consChamp }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:driversChamp',
+							'predicate': 'dbp:driversChamp',
 							'object': '?driversChamp }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:debut',
+							'predicate': 'dbp:debut',
 							'object': '?debut }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:fastestLaps',
+							'predicate': 'dbp:fastestLaps',
 							'object': '?fastestLaps }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:wins',
+							'predicate': 'dbp:wins',
 							'object': '?wins }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:poles',
+							'predicate': 'dbp:poles',
 							'object': '?poles }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:races',
+							'predicate': 'dbp:races',
 							'object': '?races }'
 						})
 						.registerTriple({
 							'subject': 'OPTIONAL {' + resource,
-							'predicate': 'dbpprop:principal',
+							'predicate': 'dbp:principal',
 							'object': '?principal }'
 						})
 						.registerTriple({

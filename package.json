@@ -66,18 +66,18 @@
     "xlsx": "*"
   },
   "devDependencies": {
-    "mockgoose": "*",
-    "supertest": "*",
     "babel-preset-es2015": "*",
     "babel-preset-react": "*",
     "babelify": "*",
     "browserify": "*",
-    "gulp": "*",
+    "gulp": "^4.0.0",
     "gulp-if": "*",
     "gulp-livereload": "*",
     "gulp-streamify": "*",
     "gulp-uglify": "*",
     "gulp-util": "*",
+    "mockgoose": "*",
+    "supertest": "*",
     "vinyl-source-stream": "*"
   }
 }
